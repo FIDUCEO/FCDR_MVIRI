@@ -1,0 +1,399 @@
+name;description;dtype;h1;h2;h3;t;l;Store;var;scales
+header1_OriginalFormat;Format;S1;1;0;0;0;0;1;0;1
+header1_Year;Year (eg 1995);i4;1;0;0;0;0;1;0;1
+header1_Yday;Day (1 to 366);i4;1;0;0;0;0;1;0;1
+header1_SlotNum;Slot Number (1 to 48);i4;1;0;1;1;0;1;0;1
+header1_DataType;Data Type  (=9);i4;1;0;0;0;0;0;;1
+header1_ImageProcessingStatus;Image Processing Performed contents are partially valid in the header (values 1-4 may be present), (valid in trailer)://1=Realtime rectification (never set)//2=Batch rectification (never set)//3=Real Time Unrectified but misregistration corrected//4=Batch Unrectified but misregistration corrected//5=Realtime/Splines 4x4/ Splines interpolation of DM//6=Batch/Splines 4x4/ Splines interpolation of DM//9=Real time/nearest neighbour/ Bilinear interpolation of DM//10=Batch/ nearest neighbour/ Bilinear interpolation of DM //25=image is unrectified (ie corrected for misregistration only) (never set);i4;1;0;1;1;0;1;1;1
+header1_SpectralContent;Spectral Content. Add together the following values depending on content (valid in trailer)://VIS1=1 VIS2=2 VIS3=4 VIS4=8 IR1=16 IR2=32 WV1=64 WV2=128;i4;1;0;1;1;0;0;;1
+header1_NumScans;Number of scans this slot;i4;1;0;0;0;0;1;0;1
+header1_NumScanValidRapid;Scan number (only set for rapid scan slots);i4;1;0;0;0;0;1;0;1
+header1_RecLength;Record Length (15360);i4;1;0;0;0;0;1;0;1
+header1_NumRec;Number of Records (2506);i4;1;0;0;0;0;1;0;1
+header1_NumRecHead;Number of Records in Header (3);i4;1;0;0;0;0;1;0;1
+header1_FileType;"Type (=""STANDARD"")";S1;1;0;0;0;0;0;;1
+header1_SatCode;"Satellite Code (eg ""M4"")";S1;1;0;0;0;0;1;0;1
+header1_JulianSlotNum;Julian Slot Number: modified julian day*48 + slot number in current day, where modified //julian day 0 = 1 january 1950;i4;1;1;1;1;1;1;0;1
+header1_LastLineImage;Last line of image (valid in trailer);i2;1;0;0;0;0;1;1;1
+header1_VisChannnelInUse;Visible Channel in use;u1;1;0;0;0;0;1;1;1
+header1_IrChannnelInUse;IR Channel in use;u1;1;0;0;0;0;1;1;1
+header1_WvChannnelInUse;WV Channel in use;u1;1;0;0;0;0;1;1;1
+header1_ScanMode;Scanning mode (not set);i2;1;0;0;0;0;0;;1
+header1_SecsPastMidnightForSHL;Seconds past midnight for Southern horizon line;i4;1;0;0;0;0;1;0;1
+header1_VisibleSouthNorth;Visible South and North (valid in trailer);i2;1;0;0;0;0;1;1;1
+header1_FishRemoval;Fish removal (1) =0 Removal OFF (1) =1 Removal ON (2)    IR fish found//(3)      WV fish found (4)       Number of replaced fish   (5)    Lines searched//(valid in trailer);i4;1;0;0;0;0;1;1;1
+header1_NumLineWithRadposAnomalies;Number of rectified raw image lines used with RADPOS anomalies (valid in trailer);i4;1;0;0;0;0;1;0;1
+header1_RectInterpMethod;Rectification Interpolation method://      0      Cubic Spline            1      Nearest Neighbour;i4;1;0;0;0;0;1;0;1
+header1_MixedVisModeFlag;Mixed Visible channel mode flag;i4;1;0;0;0;0;1;0;1
+header1_lEastWestCorrAppFlag;East West Corrections Applied flag;i4;1;0;0;0;0;1;0;1
+header1_LensRotationCorrApplFlag;Lens Rotation Correction Applied flag;i4;1;0;0;0;0;1;0;1
+header1_VariableGainCorrAppFlag;Variable Gain Correction Applied flag;i4;1;0;0;0;0;1;0;1
+header1_NullDefMatFlag;Null Deformation Matrix flag://     0      Normal Deformation Matrix         1     Null Deformation Matrix;i4;1;0;0;0;0;1;0;1
+header1_IPSdataVersion;IPS Data Version number;i4;1;0;0;0;0;1;0;1
+header1_IPSalgoVersion;IPS Algorithm Version number;i4;1;0;0;0;0;1;0;1
+header1_IPSheadRec1Version;IPS Header Record 1 Version number;i4;1;0;0;0;0;1;0;1
+header1_WhereRectifiedIndicator;Where Rectified From indicator://     1      Online Rectification,        2       Offline Rectification;i4;1;0;0;0;0;1;0;1
+header1_FirstLineUsed;First raw image line used (valid in trailer);i4;1;0;0;0;0;1;0;1
+header1_LastLineUsed;Last raw image line used (valid in trailer);i4;1;0;0;0;0;1;0;1
+header1_VisSouthLostLineTable;VIS South lost line table (valid in trailer);u1;1;0;0;0;0;1;1;1
+header1_VisNorthLostLineTable;VIS North lost line table (valid in trailer);u1;1;0;0;0;0;1;1;1
+header1_IrLostLineTable;IR lost line table (valid in trailer);u1;1;0;0;0;0;1;1;1
+header1_WvLostLineTable;WV lost line table (valid in trailer);u1;1;0;0;0;0;1;1;1
+header1_DropBitTestControlCodes;Dropped bit test control codes (valid in trailer);i4;1;0;0;0;0;1;1;1
+header1_DropBitHandlingStatsViss;Dropped bit handling stats, for each VISs channel (valid in trailer);i4;1;0;0;0;0;1;1;1
+header1_DropBitHandlingStatsVisn;Dropped bit handling stats, for each VISn channel (valid in trailer);i4;1;0;0;0;0;1;1;1
+header1_DropBitHandlingStatsIr;Dropped bit handling stats, for each IR channel (valid in trailer);i4;1;0;0;0;0;1;1;1
+header1_DropBitHandlingStatsWv;Dropped bit handling stats, for each WV channel (valid in trailer);i4;1;0;0;0;0;1;1;1
+header2_JulianSlotNum;Julian slot;i4;1;1;1;1;1;0;;1
+header2_GeometricQuality;Image geometric quality://0 =nominal 1 =attitude unknown//2 =orbit unknown 3 =horizon incomplete//4 =no deformation calculated 5 =termination due to RADPOS - LID inconsistencies//6 =problems with HR interpretation data;i4;0;1;0;0;0;1;0;1
+header2_NoGridPointsDefMat;Number of grid points on which deformation matrix is based (initially 26);i4;0;1;0;0;0;1;0;1
+header2_DeformStarts;Line resp. pixel where deform. Grid starts (initially 50);i4;0;1;0;0;0;1;0;1
+header2_DeformEnds;Line resp. pixel where deform. Grid ends (initially 2450);i4;0;1;0;0;0;1;0;1
+header2_DeformStep;Line resp. pixel step of deformation grid (initially 96);i4;0;1;0;0;0;1;0;1
+header2_XDeformationMatrix;Deform. matrix (X-comp of vectors) (set to zeros);f4;0;1;0;0;0;0;;1
+header2_YDeformationMatrix;Deform. matrix (Y-comp of vectors) (set to zeros);f4;0;1;0;0;0;0;;1
+header2_WefaxSatId;Satellite ID for WEFAX dissemination;S1;0;1;0;0;0;0;;1
+header2_HrSatId;Satellite ID for HR dissemination;S1;0;1;0;0;0;0;;1
+header2_Vis1RegParamConst;VIS1 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis2RegParamConst;VIS2 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis3RegParamConst;VIS3 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis4RegParamConst;VIS4 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Ir1RegParamConst;IR1 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Ir2RegParamConst;IR 2 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Wv1RegParamConst;WV1 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Wv2RegParamConst;WV 2 registration parameters constant term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis1RegParamLinear;VIS1 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis2RegParamLinear;VIS2 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis3RegParamLinear;VIS3 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Vis4RegParamLinear;VIS4 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Ir1RegParamLinear;IR1 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Ir2RegParamLinear;IR 2 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Wv1RegParamLinear;WV1 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_Wv2RegParamLinear;WV 2 registration parameters linear term (1)=pixel direction, (2) = line direction;f4;0;1;0;0;0;1;1;1
+header2_SeasonaalAmplitude;Amplitude of seasonal effect (not set);f4;0;1;0;0;0;0;;1
+header2_SeasonalPhase;Phase of seasonal effect (not set);f4;0;1;0;0;0;0;;1
+header2_DefMataFineTuneCorrYdir;Deformation matrix fine-tuning correction  line direction;f4;0;1;0;0;0;0;;1
+header2_DefMatFineTuneCorrXdir;Deformation matrix fine-tuning correction  pixel direction;f4;0;1;0;0;0;0;;1
+header2_EarthEquatorialRadius;Earth equatorial radius (km);f8;0;1;0;0;0;1;0;1
+header2_EarthPolarRadius;Earth polar radius (km);f8;0;1;0;0;0;1;0;1
+header2_DistFromEarthCentre;Distance from Earth centre (km);f8;0;1;0;0;0;0;0;1
+header2_RadiometerSteppinAngle;Radiometer stepping angle (radians?);f8;0;1;0;0;0;1;0;1
+header2_NominalSubSatelliteLongitude;Nominal Sub-satellite longitude (radians);f8;0;1;0;0;0;1;0;1
+header2_CodeForNominalSubSatellitePoint;Code for nominal sub-satellite point;S1;0;1;0;0;0;1;0;1
+header2_NullDefMatUsedFlag;Null Deformation Used Flag. Set TRUE if used;S1;0;1;0;0;0;1;0;1
+header2_Alpha0;ALPHA0 parameter;f8;0;1;0;0;0;1;0;1
+header2_Sat_OffsetFromSSP;Offset of satellite from SSP (degrees);f8;0;1;0;0;0;1;0;1
+header2_AbsPositionSat;Absolute position of satellite (degrees);f8;0;1;0;0;0;1;0;1
+header2_SICClockPeriod;SIC clock period;f8;0;1;0;0;0;1;0;1
+header2_TimeDurationPixel;Time duration of pixel;f8;0;1;0;0;0;1;0;1
+header2_EquatorialRadEastAtmHeight;Equatorial radius eastern atmos. height;f8;0;1;0;0;0;1;0;1
+header2_EquatorialRadWestAtmHeight;Equatorial radius western atmos. height;f8;0;1;0;0;0;1;0;1
+header2_EquatorialRadSouthAtmHeight;Equatorial radius southern atmos. height;f8;0;1;0;0;0;1;0;1
+header2_EquatorialRadNorthAtmHeight;Equatorial radius northern atmos. height;f8;0;1;0;0;0;1;0;1
+header2_RefinedSouthHorizRADPOS;Refined southern horizon RADPOS;f4;0;1;0;0;0;1;0;1
+header2_RefinedNorthHorizRADPOS;Refined northern horizon RADPOS;f4;0;1;0;0;0;1;0;1
+header2_RADPosLineIDdiff;RADPOS-LINEID difference;i4;0;1;0;0;0;1;0;1
+header2_TimeRADPosRelationCoeff;Time-RADPOS relationship coefficients;f8;0;1;0;0;0;1;1;1
+header2_F0ScanningParam;F0 scanning parameter;f8;0;1;0;0;0;1;0;1
+header2_F1ScanningParam;F1 scanning parameter;f8;0;1;0;0;0;1;0;1
+header2_Attitude;Attitude;f8;0;1;0;0;0;1;1;1
+header2_PixelSamplingRateCoeff;Pixel sampling rate coefficients;f8;0;1;0;0;0;1;1;1
+header2_SpinDeviationCoeff;Spin deviation coefficients;f8;0;1;0;0;0;1;1;1
+header2_RawImageSkewnessCoeff;Raw image skewnwss coefficients;f8;0;1;0;0;0;1;1;1
+header2_AttitudeAttDriftRate;Attitude and attitude drift rate;f8;0;1;0;0;0;1;1;1
+header2_EpochAMVG3;Epoch of AMVG3;f8;0;1;0;0;0;1;0;1
+header2_F2ScanningParam;F2 scanning parameter;f8;0;1;0;0;0;1;0;1
+header2_F3ScanningParam;F3 scanning parameter (no longer  used);f8;0;1;0;0;0;1;0;1
+header2_OrbitCoordinatesMgfImageStart;Orbit coordinates in MGF at image start time;f8;0;1;0;0;0;1;1;1
+header2_OrbitCoordinatesMgfImageEnd;Orbit coordinates in MGF at image end time;f8;0;1;0;0;0;1;1;1
+header2_CartCompAttitudeImageStart;Cartesian component of attitude at image start time;f4;0;1;0;0;0;1;1;1
+header2_CartCompAttitudeImageEnd;Cartesian component of attitude at image end time;f4;0;1;0;0;0;1;1;1
+header2_OrbitCoordinatesFixedEarthImageStart;Orbit coordinates in Earth fixed frame at image start time;f8;0;1;0;0;0;1;1;1
+header2_OrbitCoordinatesFixedEarthImageEnd;Orbit coordinates in Earth fixed frame at image end time;f8;0;1;0;0;0;1;1;1
+header2_EarthCentreInPixels;Earth centre in pixels;f4;0;1;0;0;0;1;0;1
+header2_EarthCentreInLines;Earth centre in lines;f4;0;1;0;0;0;1;0;1
+header2_ProgramErrorLevelStopCode;Program error level/stop code;i4;0;1;0;0;0;1;0;1
+header2_LensCoeffType;Lens coefficient type;i4;0;1;0;0;0;1;0;1
+header2_SunCoordMgfImage_start;Sun coordinates in MGF at image start time;f8;0;1;0;0;0;1;1;1
+header2_SunCoordMgfImage_end;Sun coordinates in MGF at image end time;f8;0;1;0;0;0;1;1;1
+header2_NoVisSouthHorizPairs;Total number of visible South horizon pairs;i4;0;1;0;0;0;1;0;1
+header2_NoVisSouthHorizPairsQuality;Total number of visible South horizon pairs with acceptable quality;i4;0;1;0;0;0;1;0;1
+header2_NoVisNorthHorizPairs;Total number of visible North horizon pairs;i4;0;1;0;0;0;1;0;1
+header2_NoVisNorthHorizPairsQuality;Total number of visible North horizon pairs with acceptable quality;i4;0;1;0;0;0;1;0;1
+header2_NoIrHorizPairs;Total number of Infrared horizon pairs;i4;0;1;0;0;0;1;0;1
+header2_NoIrHorizPairsQuality;Total number of Infrared horizon pairs with acceptable quality;i4;0;1;0;0;0;1;0;1
+header2_EastWestCenteringBiasCoeff;East-West centring bias coefficients;f8;0;1;0;0;0;1;1;1
+header2_EquatorialAtmosphericHeight;Equatorial atmospheric height (km);f8;0;1;0;0;0;1;0;1
+header2_THETA1ParamFromB0Wraparound;THETA1 parameter (from B0 wraparound);f8;0;1;0;0;0;1;0;1
+header2_EastWestLensCorrSlotEnd;East-West lens correction at end of slot;f8;0;1;0;0;0;1;0;1
+header2_NorthSouthLensCorrSlotEnd;North-South lens correction at end of slot;f8;0;1;0;0;0;1;0;1
+header2_StableAttitudeAvailFlag;TRUE if stable attitude available this slot;S1;0;1;0;0;0;1;0;1
+header2_EeastWestBiasCoeffAvailThisSlotFlag;TRUE if E-W bias coeffs available this slot;S1;0;1;0;0;0;1;0;1
+header2_CalibratedTH1G3AvailFlag;TRUE if calibrated TH1G3 available this slot;S1;0;1;0;0;0;1;0;1
+header2_CalibratedT1HG3AvailFlag;TRUE if calibrated T1HG3 available this slot;S1;0;1;0;0;0;1;0;1
+header2_THETA1ParamFromHousekeeping;THETA1 parameter (from housekeeping)//;f8;0;1;0;0;0;1;0;1
+header3_JulianSlotNum;Julian slot number;i4;1;1;1;1;1;0;;1
+header3_JulianDay;Julian day (01 Jan 1950 =Day 0);i2;0;0;1;1;0;0;;1
+header3_SlotNum;Slot number;i2;1;0;1;1;0;0;;1
+header3_NominalImageTime;Nominal image time (HHMM);i2;0;0;1;1;0;1;0;1
+header3_SlotType;Slot type: 0 = no data,  1 = nominal slot (never set), 2 = service slot, 3 = MOP format ,//4 = MAP slot (mini-scans) //(valid in the trailer);i2;0;0;1;1;0;1;0;1
+header3_ImageQualityFlag;Image quality flag 1 =grids can be added 2 =coastlines can be added//      3 =both can be added 0 =should not add either//(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_SatId;Imaging Sat ID  (M4, M5, ..);S1;0;0;1;1;0;1;0;1
+header3_SubSatPointDisplacementInPixels;Sub-satellite point displacement in pixels (valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_SubSatPointDisplacementInLines;Sub-satellite point displacement in lines (valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_VissMissingLineTable;Missing line table VISs (rectified image) (valid in trailer);u1;0;0;1;1;0;1;1;1
+header3_Visn_missingLineTable;Missing line table VISn (rectified image) (valid in trailer);u1;0;0;1;1;0;1;1;1
+header3_IrMissingLineTable;Missing line table IR (rectified image) (valid in trailer);u1;0;0;1;1;0;1;1;1
+header3_WvMissingLineTable;Missing line table WV (rectified image) Bit =1: no missing data in line//      Bit =0: some missing data in line//(valid in trailer);u1;0;0;1;1;0;1;1;1
+header3_NumMissingLinesReplaced;Number of missing lines replaced (valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_NumBlackLines1;Number of black lines in lines 67 - 866 for each channel: (1)=VIS, (2)=IR, (3)=WV//(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_NumBlackLines2;Number of black lines in lines 867 - 1666 for each channel: //(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_NumBlackLines3;Number of black lines in lines 1667 - 2466 for each channel: //(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_WefaxAnnotation;Annotation for WEFAX formats (METn DD MMM YYYY hh mm);S1;0;0;1;1;0;1;0;1
+header3_ImageQualityAnnotation;Annotation for image quality (valid in trailer) (never set);S1;0;0;1;1;0;1;0;1
+header3_SpectralContent;Spectral contents VIS (for dissemination)//Spectral contents IR (for dissemination)//Spectral contents WV (for dissemination)//0 =no data 1 =VIS 1 2 =VIS 2 3 =VIS 1+2 4 =IR 1 5 =IR 2 6 =WV 1 7 =WV 2 8 =VIS 3 9 =VIS 4//10 =VIS 2 +3 11 =VIS 2 +4 12 =VIS 3 +4;i2;1;0;1;1;0;0;;1
+header3_DeformationUsed;Deformation model used://3 = Batch,        -3 =Batch, null deformation//7 = Real time,   -7 =Real time, null deformation//(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_BbIrCountForSpaceView;BB IR count for space view calibration (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;1;0;0.001
+header3_StdBbIrCountForSpaceview;Standard deviation of BB IR count for space view calibration (X.XX) (valid in trailer);S1;0;0;1;1;0;1;0;0.01
+header3_BbWvCountForSpaceview;BB WV count for space view calibration (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;1;0;0.001
+header3_StdBbWvCountForSpaceView;Standard deviation of BB WV count for space view calibration (X.XX) (valid in trailer);S1;0;0;1;1;0;1;0;0.01
+header3_BbColdTemp;Temp. of 'cold' black body in K (XXX.XX): : this only for nominal (not space view) calibration. (valid in trailer);S1;0;0;1;1;0;1;0;0.01
+header3_BbWarmTemp;Temp. of 'hot' black body in K (XXX.XX): for nominal and space view calibration (valid in trailer);S1;0;0;1;1;0;1;0;0.01
+header3_BbIrCountNominal;BB IR count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;1;0;0.001
+header3_StdBbIrCountNominal;Standard deviation of black body IR count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;1;0;0.1
+header3_BbWvCountNominal;BB WV count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;1;0;0.001
+header3_StdBbWvCountNominal;Standard deviation of black body WV count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;1;0;0.01
+header3_BbCalibrationTimestamp;Timestamp for black body calibration (DayDayDaySlotSlot) (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_MpefAabsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;1;0;0.00001
+header3_MpefIrSpaceCount;MPEF IR space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;1;0;0.1
+header3_MpefIrCalibrationTimestamp;MPEF Timestamp for IR calibration (DayDayDaySlotSlot): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_MpefAbsWvCal;MPEF absolute WV calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;1;0;0.00001
+header3_MpefWvSpaceCount;MPEF  WV space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;1;0;0.1
+header3_MpefWvCalibrationTimestamp;MPEF stamp for WV calibration (DayDayDaySlotSlot)//(valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_AllChannelGains;Gains for IR, WV, VIS 1 or 4, VIS 2 or 3 (GiGiGwGwGvGvG2G2) (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_RightAscensionAattSouth;Right ascension attitude South (degree) (valid in trailer);f8;0;0;1;1;0;1;0;1
+header3_DeclinationAttSouth;Declination of attitude South (degree) (valid in trailer);f8;0;0;1;1;0;1;0;1
+header3_RightAscensionAttNorth;Right ascension attitude North (degree) (valid in trailer);f8;0;0;1;1;0;1;0;1
+header3_DeclinationAttNorth;Declination of attitude North (degree) (valid in trailer);f8;0;0;1;1;0;1;0;1
+header3_RefinedAttitudeXYZ;X, Y, Z of refined attitude (valid in trailer);f8;0;0;1;1;0;1;1;1
+header3_RightAscensionDeclinationMeanAtt;Right ascension & declination of mean refined attitude (valid in trailer);f8;0;0;1;1;0;1;1;1
+header3_NoSlotsWithRefinedAttitude;Number of slots of refined attitude (valid in trailer);i4;0;0;1;1;0;1;0;1
+header3_SpinDurMinusNominalSpinDur;Spin duration minus nominal spin duration (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_EclipseOperation;Eclipse operation (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Decontamination;Decontamination (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Manoeuvre;Manoeuvre (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_View;TRUE =Earth FALSE =Sun (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Ir1On;IR 1 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Ir2On;IR 2 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Wv1On;WV 1 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Wv2On;WV 2 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Vis1On;VIS 1 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Vis2On;VIS 2 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Vis3On;VIS 3 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_Vis4On;VIS 4 On (valid in trailer);S1;0;0;1;1;0;1;0;1
+header3_ImageStatus;Image status (valid in trailer)//1 =Horizon analysis performed//2 =Spin speed fit//3 =Orbit offset vector fit//4 =Pixel sampling rate fit//5 =Attitude refinement iteration based on horizon results//8 =Calculation of deformation vector field performed//9 =Completion of geometrical processing//10=Completion of rectification//11=Completion of amplitude processing;S1;0;0;1;1;0;1;0;1
+header3_LinePixelOrientation;Southern line, 1st/last pixel//Northern line, 1st/last pixel//East pixel, South line/North line//West pixel, South line/North line (valid in trailer);i2;0;0;1;1;0;1;1;1
+header3_SatEarcthCentreDistance;Distance satellite - earth centre (valid in trailer);f8;0;0;1;1;0;1;0;1
+header3_OrbitOffsetSouthernHorizon;X, Y, Z components of orbit offset vector in nominal image frame at Southern horizon limit (valid in trailer);f8;0;0;1;1;0;1;1;1
+header3_OrbitOffsetNorthernHorizon;X, Y, Z components of orbit offset vector in nominal image frame at Northern horizon limit (valid in trailer);f8;0;0;1;1;0;1;1;1
+header3_MaxDeformationDiffXInsideColumn;Max deformation difference X-comp within column (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_MaxDeformationDiffYInsideLine;Max deformation difference Y-comp within line (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_MaxDeformationDiffXInsideLine;Max deformation difference X-comp within line (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_MaxDeformationDiffYInsideColumn;Max deformation difference Y-comp within column (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_ImageConditions;Image conditions (valid in trailer)//1 =Earth within field of view in East/West//2 =Earth within field of view in North/South//3 =East/West horizon limits within predicted margin//4 =North/South horizon limits within predicted margin;S1;0;0;1;1;0;1;0;1
+header3_MinCountValue;Lowest non zero count in histogram (-1=Off) (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;1;1;1
+header3_MaxCountValue;Highest non zero count in histogram (-1=Off) (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;1;1;1
+header3_MeanVis1or4;Mean value of VIS1/4 (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_MeanVis2or3;Mean value of VIS2/3 (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_SnrSpaceCorners;Signal to noise ratio in space corners  (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_NumLinesSnrCalc;Number of lines used for S/N calculation (valid in trailer);i4;0;0;1;1;0;1;0;1
+header3_SnrEastern;S/N ratios Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_SnrWestern;S/N ratios Western part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_MeanNoiseCountEastern;Mean noise count Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_MeanNoiseCountWestern;Mean noise count Western part (IR1/2, VIS1/4, VIS2/3, WV1/2)) (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_MaxSpaceCountEastern;Maximum space count Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;1;1;1
+header3_MaxSpaceCountWestern;Maximum space count Western part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;1;1;1
+header3_Message;Space kept for Administrative Message;S1;0;0;1;1;0;0;;1
+header3_NominalSatLongitude;Nominal Satellite longitude in degrees (East =Positive);i2;0;0;1;1;0;0;;1
+header3_NominalSatLongitudeDeg;Nominal satellite longitude in degrees;f4;0;0;1;1;0;1;0;1
+header3_CodeSSP;Code for nominal sub-satellite point (EUR, WGG etc);S1;0;0;1;1;0;1;0;1
+header3_NumLandmarks;Total number of landmarks (max =128);i4;0;0;1;1;0;1;1;1
+header3_NumVisCloudFreeLandmarks;Number of visible landmarks that are judged cloud free;i4;0;0;1;1;0;1;1;1
+header3_NumIrCloudfreeLandmarks;Number of infrared landmarks that are judged cloud free;i4;0;0;1;1;0;1;1;1
+header3_GQASource;GQA Source Flag   (1)=Online, (2)=Archive, (3)=Offline (valid in trailer);i4;0;0;1;1;0;1;0;1
+header3_HeaderVersionNumber;IPS RECT2LP Header Record 3 Version number;i4;0;0;1;1;0;1;0;1
+header3_NumVisLandmarksWithGoodCorr;Number of visible landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_NumIrLandmarksWithGoodCorr;Number of infrared landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;1;0;1
+header3_AbsStdVisLandmarks;Absolute standard deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_AbsMaxVisLandmarks;Absolute maximum deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_NumLandmarksWithMaxDeviation;Catalogue number of landmark for which absolute maximum deviation occurs (1)=line, (2)=pixel  //(valid in trailer);i4;0;0;1;1;0;1;1;1
+header3_AbsStdIrLandmarks;Absolute standard deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_AbsMaxIrLandmarks;Absolute maximum deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_AbsLandmarkResults;Individual Landmark results of absolute landmark registration process for IR (ie compared to reference landmarks).//-reference Landmark line number from slot start//-reference Landmark pixel position value from slot start//-registered line offset//-registered pixel offset//-line offset after least square fit//-pixel offset after least square fit//-correlation factor obtained//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_NumVisLandmarksWithGoodCorr2;Number of visible landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+header3_NumIrLandmarksWithGoodCorr2;Number of infrared landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+header3_RelStdVisLandmarks;Relative standard deviation of visible landmarks (1)=line,  (2)=pixel  (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_RelMaxVisLandmarks;Relative maximum deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_NumLandmarksWithRelMaxDeviation;Catalogue number of landmark for which relative maximum deviation occurs (1)=line, (2)=pixel//(valid in trailer);i4;0;0;1;1;0;1;1;1
+header3_RelStdIrLandmarks;Relative standard deviation of infrared landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_RelMaxIrLandmarks;Relative maximum deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_RelLandmarkResults;Individual Landmark results of relative landmark registration process for IR (ie compared to reference landmarks).//-reference Landmark line number from slot start//-reference Landmark pixel position value from slot start//-registered line offset//-registered pixel offset//-line offset after least square fit//-pixel offset after least square fit//-correlation factor obtained//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_VisEqualisationCoef;Equalisation coefficient VISS/VISN (valid in trailer)  (not used);f4;0;0;1;1;0;1;0;1
+header3_DifInPixelDirection;Difference in pixel direction of Batch and Real Time deformation matrices//- maximum deviation//- mean difference//- root mean square//- sigma//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_DifInLineDirection;Difference in line direction of Batch and Real-time deformation matrices//- maximum deviation//- mean difference//- root mean square//- sigma//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_RectificationFlag;Flag: 0 = Real time rectification not run//1 = Use Batch deformation matrix//2 = Use Real-time deformation matrix//(valid in trailer);i4;0;0;1;1;0;1;0;1
+header3_GqaCheckFlag;GQA checks flag values as follows//41=image passed GQA checks//42=image failed GQA checks//43=GQA checks disabled//(valid in trailer);i2;0;0;1;1;0;1;0;1
+header3_ImageProcessingStatus;Image Processing Performed contents are partially valid in the header (values 1-4 may be present)://1=Realtime rectification (never set)//2=Batch rectification (never set)//3=Real Time Unrectified but misregistration corrected//4=Batch Unrectified but misregistration corrected//5=Realtime/Splines 4x4/ Splines interpolation of DM//6=Batch/ Splines 4x4/ Splines interpolation of DM//9=Real time/nearest neighbour/ Bilinear interpolation of DM//10=Batch/ nearest neighbour/ Bilinear interpolation of DM //25=image is unrectified (ie corrected for misregistration only) (never set)//(valid in trailer);i4;1;0;1;1;0;0;;1
+header3_AlignPadding;Bytes for MPEF word alignment;S1;0;0;1;1;0;0;;1
+header3_SpaceCornersVISS;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_SpaceCornersVISN;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_SpaceCornersIR;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_SpaceCornersWV;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_StdSpaceCornersVISS;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_StdSpaceCornersVISN;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_StdSpaceCornersIR;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_StdSpaceCornersWV;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;1;1;1
+header3_QuadraticEqCoeff;Quadratic equalisation coefficients  (valid in trailer);f8;0;0;1;1;0;1;1;1
+header3_M6CCalibData;M6C Calibration Data   (valid in trailer)//;S1;0;0;1;1;0;1;0;1
+trailer_JulianSlotNum;Julian slot number;i4;1;1;1;1;1;0;;1
+trailer_JulianDay;Julian day (01 Jan 1950 =Day 0);i2;0;0;1;1;0;0;;1
+trailer_SlotNum;Slot number;i2;1;0;1;1;0;0;;1
+trailer_NominalImageTime;Nominal image time (HHMM);i2;0;0;1;1;0;0;;1
+trailer_SlotType;Slot type: 0 = no data,  1 = nominal slot (never set), 2 = service slot, 3 = MOP format ,//4 = MAP slot (mini-scans) //(valid in the trailer);i2;0;0;1;1;0;0;;1
+trailer_ImageQualityFlag;Image quality flag 1 =grids can be added 2 =coastlines can be added//      3 =both can be added 0 =should not add either//(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_SatId;Imaging Sat ID  (M4, M5, ..);S1;0;0;1;1;0;0;;1
+trailer_SubSatPointDisplacementInPixels;Sub-satellite point displacement in pixels (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_SubSatPointDisplacementInLines;Sub-satellite point displacement in lines (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_VissMissingLineTable;Missing line table VISs (rectified image) (valid in trailer);u1;0;0;1;1;0;0;;1
+trailer_Visn_missingLineTable;Missing line table VISn (rectified image) (valid in trailer);u1;0;0;1;1;0;0;;1
+trailer_IrMissingLineTable;Missing line table IR (rectified image) (valid in trailer);u1;0;0;1;1;0;0;;1
+trailer_WvMissingLineTable;Missing line table WV (rectified image) Bit =1: no missing data in line//      Bit =0: some missing data in line//(valid in trailer);u1;0;0;1;1;0;0;;1
+trailer_NumMissingLinesReplaced;Number of missing lines replaced (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_NumBlackLines1;Number of black lines in lines 67 - 866 for each channel: (1)=VIS, (2)=IR, (3)=WV//(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_NumBlackLines2;Number of black lines in lines 867 - 1666 for each channel: //(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_NumBlackLines3;Number of black lines in lines 1667 - 2466 for each channel: //(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_WefaxAnnotation;Annotation for WEFAX formats (METn DD MMM YYYY hh mm);S1;0;0;1;1;0;0;;1
+trailer_ImageQualityAnnotation;Annotation for image quality (valid in trailer) (never set);S1;0;0;1;1;0;0;;1
+trailer_SpectralContent;Spectral contents VIS (for dissemination)//Spectral contents IR (for dissemination)//Spectral contents WV (for dissemination)//0 =no data 1 =VIS 1 2 =VIS 2 3 =VIS 1+2 4 =IR 1 5 =IR 2 6 =WV 1 7 =WV 2 8 =VIS 3 9 =VIS 4//10 =VIS 2 +3 11 =VIS 2 +4 12 =VIS 3 +4;i2;1;0;1;1;0;0;;1
+trailer_DeformationUsed;Deformation model used://3 = Batch,        -3 =Batch, null deformation//7 = Real time,   -7 =Real time, null deformation//(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_BbIrCountForSpaceView;BB IR count for space view calibration (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_StdBbIrCountForSpaceview;Standard deviation of BB IR count for space view calibration (X.XX) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbWvCountForSpaceview;BB WV count for space view calibration (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_StdBbWvCountForSpaceView;Standard deviation of BB WV count for space view calibration (X.XX) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbColdTemp;Temp. of 'cold' black body in K (XXX.XX): : this only for nominal (not space view) calibration. (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbWarmTemp;Temp. of 'hot' black body in K (XXX.XX): for nominal and space view calibration (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbIrCountNominal;BB IR count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_StdBbIrCountNominal;Standard deviation of black body IR count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbWvCountNominal;BB WV count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_StdBbWvCountNominal;Standard deviation of black body WV count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_BbCalibrationTimestamp;Timestamp for black body calibration (DayDayDaySlotSlot) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefAabsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefIrSpaceCount;MPEF IR space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefIrCalibrationTimestamp;MPEF Timestamp for IR calibration (DayDayDaySlotSlot): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefAbsWvCal;MPEF absolute WV calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefWvSpaceCount;MPEF  WV space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefWvCalibrationTimestamp;MPEF stamp for WV calibration (DayDayDaySlotSlot)//(valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_AllChannelGains;Gains for IR, WV, VIS 1 or 4, VIS 2 or 3 (GiGiGwGwGvGvG2G2) (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_RightAscensionAattSouth;Right ascension attitude South (degree) (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_DeclinationAttSouth;Declination of attitude South (degree) (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_RightAscensionAttNorth;Right ascension attitude North (degree) (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_DeclinationAttNorth;Declination of attitude North (degree) (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_RefinedAttitudeXYZ;X, Y, Z of refined attitude (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_RightAscensionDeclinationMeanAtt;Right ascension & declination of mean refined attitude (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_NoSlotsWithRefinedAttitude;Number of slots of refined attitude (valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_SpinDurMinusNominalSpinDur;Spin duration minus nominal spin duration (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_EclipseOperation;Eclipse operation (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Decontamination;Decontamination (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Manoeuvre;Manoeuvre (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_View;TRUE =Earth FALSE =Sun (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Ir1On;IR 1 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Ir2On;IR 2 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Wv1On;WV 1 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Wv2On;WV 2 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Vis1On;VIS 1 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Vis2On;VIS 2 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Vis3On;VIS 3 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_Vis4On;VIS 4 On (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_ImageStatus;Image status (valid in trailer)//1 =Horizon analysis performed//2 =Spin speed fit//3 =Orbit offset vector fit//4 =Pixel sampling rate fit//5 =Attitude refinement iteration based on horizon results//8 =Calculation of deformation vector field performed//9 =Completion of geometrical processing//10=Completion of rectification//11=Completion of amplitude processing;S1;0;0;1;1;0;0;;1
+trailer_LinePixelOrientation;Southern line, 1st/last pixel//Northern line, 1st/last pixel//East pixel, South line/North line//West pixel, South line/North line (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_SatEarcthCentreDistance;Distance satellite - earth centre (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_OrbitOffsetSouthernHorizon;X, Y, Z components of orbit offset vector in nominal image frame at Southern horizon limit (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_OrbitOffsetNorthernHorizon;X, Y, Z components of orbit offset vector in nominal image frame at Northern horizon limit (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_MaxDeformationDiffXInsideColumn;Max deformation difference X-comp within column (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MaxDeformationDiffYInsideLine;Max deformation difference Y-comp within line (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MaxDeformationDiffXInsideLine;Max deformation difference X-comp within line (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MaxDeformationDiffYInsideColumn;Max deformation difference Y-comp within column (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_ImageConditions;Image conditions (valid in trailer)//1 =Earth within field of view in East/West//2 =Earth within field of view in North/South//3 =East/West horizon limits within predicted margin//4 =North/South horizon limits within predicted margin;S1;0;0;1;1;0;0;;1
+trailer_MinCountValue;Lowest non zero count in histogram (-1=Off) (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_MaxCountValue;Highest non zero count in histogram (-1=Off) (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_MeanVis1or4;Mean value of VIS1/4 (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MeanVis2or3;Mean value of VIS2/3 (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_SnrSpaceCorners;Signal to noise ratio in space corners  (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumLinesSnrCalc;Number of lines used for S/N calculation (valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_SnrEastern;S/N ratios Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_SnrWestern;S/N ratios Western part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MeanNoiseCountEastern;Mean noise count Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MeanNoiseCountWestern;Mean noise count Western part (IR1/2, VIS1/4, VIS2/3, WV1/2)) (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_MaxSpaceCountEastern;Maximum space count Eastern part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_MaxSpaceCountWestern;Maximum space count Western part (IR1/2, VIS1/4, VIS2/3, WV1/2) (valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_Message;Space kept for Administrative Message;S1;0;0;1;1;0;0;;1
+trailer_NominalSatLongitude;Nominal Satellite longitude in degrees (East =Positive);i2;0;0;1;1;0;0;;1
+trailer_NominalSatLongitudeDeg;Nominal satellite longitude in degrees;f4;0;0;1;1;0;0;;1
+trailer_CodeSSP;Code for nominal sub-satellite point (EUR, WGG etc);S1;0;0;1;1;0;0;;1
+trailer_NumLandmarks;Total number of landmarks (max =128);i4;0;0;1;1;0;0;;1
+trailer_NumVisCloudFreeLandmarks;Number of visible landmarks that are judged cloud free;i4;0;0;1;1;0;0;;1
+trailer_NumIrCloudfreeLandmarks;Number of infrared landmarks that are judged cloud free;i4;0;0;1;1;0;0;;1
+trailer_GQASource;GQA Source Flag   (1)=Online, (2)=Archive, (3)=Offline (valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_HeaderVersionNumber;IPS RECT2LP Header Record 3 Version number;i4;0;0;1;1;0;0;;1
+trailer_NumVisLandmarksWithGoodCorr;Number of visible landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumIrLandmarksWithGoodCorr;Number of infrared landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_AbsStdVisLandmarks;Absolute standard deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_AbsMaxVisLandmarks;Absolute maximum deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumLandmarksWithMaxDeviation;Catalogue number of landmark for which absolute maximum deviation occurs (1)=line, (2)=pixel  //(valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_AbsStdIrLandmarks;Absolute standard deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_AbsMaxIrLandmarks;Absolute maximum deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_AbsLandmarkResults;Individual Landmark results of absolute landmark registration process for IR (ie compared to reference landmarks).//-reference Landmark line number from slot start//-reference Landmark pixel position value from slot start//-registered line offset//-registered pixel offset//-line offset after least square fit//-pixel offset after least square fit//-correlation factor obtained//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumVisLandmarksWithGoodCorr2;Number of visible landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumIrLandmarksWithGoodCorr2;Number of infrared landmarks with a well formed correlation surface (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_RelStdVisLandmarks;Relative standard deviation of visible landmarks (1)=line,  (2)=pixel  (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_RelMaxVisLandmarks;Relative maximum deviation of visible landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_NumLandmarksWithRelMaxDeviation;Catalogue number of landmark for which relative maximum deviation occurs (1)=line, (2)=pixel//(valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_RelStdIrLandmarks;Relative standard deviation of infrared landmarks (1)=line, (2)=pixel  (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_RelMaxIrLandmarks;Relative maximum deviation of infrared landmarks (1)=line, (2)=pixel   (valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_RelLandmarkResults;Individual Landmark results of relative landmark registration process for IR (ie compared to reference landmarks).//-reference Landmark line number from slot start//-reference Landmark pixel position value from slot start//-registered line offset//-registered pixel offset//-line offset after least square fit//-pixel offset after least square fit//-correlation factor obtained//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_VisEqualisationCoef;Equalisation coefficient VISS/VISN (valid in trailer)  (not used);f4;0;0;1;1;0;0;;1
+trailer_DifInPixelDirection;Difference in pixel direction of Batch and Real Time deformation matrices//- maximum deviation//- mean difference//- root mean square//- sigma//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_DifInLineDirection;Difference in line direction of Batch and Real-time deformation matrices//- maximum deviation//- mean difference//- root mean square//- sigma//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_RectificationFlag;Flag: 0 = Real time rectification not run//1 = Use Batch deformation matrix//2 = Use Real-time deformation matrix//(valid in trailer);i4;0;0;1;1;0;0;;1
+trailer_GqaCheckFlag;GQA checks flag values as follows//41=image passed GQA checks//42=image failed GQA checks//43=GQA checks disabled//(valid in trailer);i2;0;0;1;1;0;0;;1
+trailer_ImageProcessingStatus;Image Processing Performed contents are partially valid in the header (values 1-4 may be present)://1=Realtime rectification (never set)//2=Batch rectification (never set)//3=Real Time Unrectified but misregistration corrected//4=Batch Unrectified but misregistration corrected//5=Realtime/Splines 4x4/ Splines interpolation of DM//6=Batch/ Splines 4x4/ Splines interpolation of DM//9=Real time/nearest neighbour/ Bilinear interpolation of DM//10=Batch/ nearest neighbour/ Bilinear interpolation of DM //25=image is unrectified (ie corrected for misregistration only) (never set)//(valid in trailer);i4;1;0;1;1;0;0;;1
+trailer_AlignPadding;Bytes for MPEF word alignment;S1;0;0;1;1;0;0;;1
+trailer_SpaceCornersVISS;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_SpaceCornersVISN;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_SpaceCornersIR;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_SpaceCornersWV;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_StdSpaceCornersVISS;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_StdSpaceCornersVISN;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_StdSpaceCornersIR;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_StdSpaceCornersWV;Space Count Grey Level Statistics//Where, GL_Space_Count_Stats (l, m, n)//      l = 1   South East,  l = 2   North East, 1 = 3   South West, l = 4   North West//      m= 1   VISS,  m= 2    VISN,  m= 3    IR,  m= 4    WV//      n= 1    Mean Space Count Value,    n= 2   Standard Deviation Space Count Value//(valid in trailer);f4;0;0;1;1;0;0;;1
+trailer_QuadraticEqCoeff;Quadratic equalisation coefficients  (valid in trailer);f8;0;0;1;1;0;0;;1
+trailer_M6CCalibData;M6C Calibration Data   (valid in trailer)//;S1;0;0;1;1;0;0;;1
+lineinfo_JulianSlotNum;Julian slot number;i4;1;1;1;1;1;0;;1
+lineinfo_LineNr;Image line number (in range 1-2500);i2;0;0;0;0;1;1;1;1
+lineinfo_ChannelIdVIS;Channel indicator (0 when no data): South Visible =1, North Visible =2,Both Visible  =3;i2;0;0;0;0;1;1;1;1
+lineinfo_ChannelIdIR;Channel indicator (0 when no data):Infrared =4;i2;0;0;0;0;1;1;1;1
+lineinfo_ChannelIdWV;Channel indicator (0 when no data):Water Vapour  =6;i2;0;0;0;0;1;1;1;1
+lineinfo_RectLineStatus;"Infrared (""space corners"" have a value of zero)";i2;0;0;0;0;1;1;1;1
+lineinfo_LineStatus;"Water Vapour (""space corners"" have a value of zero)";i2;0;0;0;0;1;1;1;1
+lineinfo_TimefitFlag;Rectified line status: zero indicates that the line is ok, an error is indicated by adding up //the following values: //1 = line generated using data from radiometer stoppage//2 = line generated using corrupted lines//4 = line generated using missing lines//8 = not completely IR gain corrected//16 = not completely WV gain corrected//32 = line unavailable (blank);i2;0;0;0;0;1;1;1;1
+lineinfo_FirstRectPix;Line status mask: zero indicates ok, error are indicated by adding up the following values//1=Format changed (normal/burst) during line//2=Partial line (missing segments)//4=Auxiliary data inconsistent//8=Satellite code unexpected//16=Sequence counter or segment counter out of sequence;i2;0;0;0;0;1;1;1;1
+lineinfo_TimeFirstRectPix;Timefit flag: 0=no fit, 5= fitting with 5 coefficients;f8;0;0;0;0;1;1;1;1
+lineinfo_LastRectPix;First rectified pixel in line;i2;0;0;0;0;1;1;1;1
+lineinfo_TimeLastRectPix;Time(secs since midnight) of first rectified pixel in line;f8;0;0;0;0;1;1;1;1
+lineinfo_FirstFitPix;Last rectified pixel in line;i2;0;0;0;0;1;1;1;1
+lineinfo_LastFitPix;Time(secs since midnight) of last rectified pixel in line;i2;0;0;0;0;1;1;1;1
+lineinfo_MaxDevFit;First rectified pixel of time/pixel fit;f8;0;0;0;0;1;1;1;1
+lineinfo_FitCoef;Last rectified pixel of time/pixel fit;f8;0;0;0;0;1;1;1;1
+lineinfo_FirstTime;Maximum deviation of time/pixel fit;i2;0;0;0;0;1;1;1;1
+lineinfo_Interval;Coefficients of time/pixel fit;i2;0;0;0;0;1;1;1;1
+lineinfo_TimesArray;First pixel of rectified pixel times;f4;0;0;0;0;1;1;1;1

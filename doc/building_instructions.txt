@@ -1,0 +1,33 @@
+The current Veersion of RICalPy primarily employs python and what 
+is available in the community regarding libraries such as numpy or
+pandas.
+However, some tools had to be additionally coded in fortran/c++/C for
+specific tasks of RICalPy. This affects the building procedure.
+
+Step 1:
+Build the libraries in folder lib/
+  A) nrCrunch (fortran):
+    The file cruncher.f contains several tools for effect calculations, 
+    e.g. a very fast function for the calculation of latitudes and 
+    longitudes. The python libs can be build with:
+f2py -c -m cruncher cruncher.f
+
+  B) vax2iee (C):
+    This tool takes care of float/double conversion from vax (OpenVMS) to 
+    ieee representation. It can be built using swig. 
+    +++At present it is not possible to build it on the RedHat VMs
+       and therefore the binary _vax2ieee.so is included in the repo++++
+ssh -X tclxs17 #opensuse machine
+# now cd to lib/vax2ieee/ folder
+rm *_wrap.c*
+rm *.so
+rm *.o
+swig -python py_vax2ieee.i
+g++ -fPIC -c STAMP_PDL_Vax2Ieee.c py_vax2ieee_wrap.c -I/usr/include/python
+g++ -fPIC STAMP_PDL_Vax2Ieee.c convert_vax_data.c -c
+g++ -shared convert_vax_data.o STAMP_PDL_Vax2Ieee.o py_vax2ieee_wrap.o -o _vax2ieee.so
+
+Step 2:
+Run RICalPy from folder src/; It should find all relevant shared 
+object files in their folders.
+
