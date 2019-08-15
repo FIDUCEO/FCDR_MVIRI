@@ -1,0 +1,12 @@
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET2 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET3 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET4 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET6 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET5 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET7 EASY
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET2 FULL
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET3 FULL
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET4 FULL
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET6 FULL
+#/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET5 FULL
+/tcenas/home/frankr/git/RICalPy/tools/injector_wrapper.sh MET7 FULL

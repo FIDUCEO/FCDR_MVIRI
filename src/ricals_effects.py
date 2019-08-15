@@ -11,10 +11,41 @@ import os
 import glob
 import allantools
 
+import pickle
+
 import ricals_tools as to
 
-sys.path.insert(0, os.getcwd()[:-4]+'/lib/nrCrunch/')
 import cruncher as cr
+import matplotlib.pyplot as plt
+
+def law_of_error_trivial(corr,uncert,sensi):
+  #generate covariance matrix from uncertainties and correlations
+  cov_mat=np.copy(corr)
+  imp_mat=np.copy(corr)
+  for i in range(corr.shape[0]):
+    for j in range(corr.shape[1]):
+      cov_mat[i,j]=uncert[i]*corr[i,j]*uncert[j]
+      imp_mat[i,j]=sensi[i]*cov_mat[i,j]*sensi[j]
+  #integrate
+  #comb=to.int_2D(imp_mat,range(np.shape(imp_mat)[0]),range(np.shape(imp_mat)[1]))
+  #sum
+  comb=imp_mat.sum(axis=(0,1))
+  #root
+  u_comb=np.sqrt(comb)
+  return u_comb,cov_mat,imp_mat
+
+def law_of_error_normal(corr,uncert,sensi):
+  #generate covariance matrix from uncertainties and correlations
+  cov_mat=uncert*corr*uncert[:, None]
+  #multiply with the sensitivity coefficients
+  imp_mat=sensi*cov_mat*sensi[:, None]
+  #integrate
+  #comb=to.int_2D(imp_mat,range(np.shape(imp_mat)[0]),range(np.shape(imp_mat)[1]))
+  #sum
+  comb=imp_mat.sum(axis=(0,1))
+  #root
+  u_comb=np.sqrt(comb)
+  return u_comb,cov_mat,imp_mat
 
 def rad_noise(head,trail):
     #calculate radiometric noise
@@ -28,22 +59,238 @@ def rad_noise(head,trail):
 
     return u_rad,k0
 
-def allan_noise(values):
+def comp_allan(vals):
+    mn=np.mean(vals)
+    sd=np.std(vals)
+    ad=allantools.adev(np.array(vals), rate=1,taus=2)[1]
+    return mn,sd,ad
+  
+def space_eval(values,corner_means,corner_stds,logs,satellite,curr_datetime,debug=0):
+  #dump
+  #pickle.dump(values, open('./tmp/values.p', 'wb'))
+  #pickle.dump(corner_means, open('./tmp/corner_means.p', 'wb'))
+  #pickle.dump(corner_stds, open('./tmp/corner_stds.p', 'wb'))
+  #values=pickle.load( open('./tmp/values.p', 'rb'))
+  #corner_means=pickle.load( open('./tmp/corner_means.p', 'rb'))
+  #corner_stds=pickle.load( open('./tmp/corner_stds.p', 'rb'))
   #VIS1
-  vals=values[0,:]
-  mn1=np.mean(vals)
-  sd1=np.std(vals)
-  al1=allantools.adev(np.array(vals), rate=1,taus=2)[1]
+  mn1,sd1,ad1 = comp_allan(values[0,:])
   #VIS2
-  vals=values[1,:] 
-  mn2=np.mean(vals)
-  sd2=np.std(vals)
-  al2=allantools.adev(np.array(vals), rate=1,taus=2)[1]
+  mn2,sd2,ad2 = comp_allan(values[1,:])
+  usable=[True,True]
+  if mn1<0:#if only detector 2 was on
+    usable[0]=False
+  if mn2<0:#if only detector 1 was on
+    usable[1]=False
+  #all
+  mn,sd,ad    = comp_allan(np.ndarray.flatten(values[values>=0]))
+  #check corners
+  rigor=4
+  uthr1=mn1+(rigor*sd1)
+  uthr2=mn2+(rigor*sd2)
+  lthr1=mn1-(rigor*sd1)
+  lthr2=mn2-(rigor*sd2)
+  #first sensor
+  flags=[]
+  if usable[0]:
+    uthr=uthr1
+    lthr=lthr1
+    for corner in [0,1,2,3]:
+      cm=corner_means[corner]
+      if cm<(lthr) or cm>(uthr):
+        flags.append(1)
+      else:
+        flags.append(0)
+  else:
+      flags=[1,1,1,1]
+  if usable[1]:
+    #second sensor
+    uthr=uthr2
+    lthr=lthr2
+    for corner in [4,5,6,7]:
+      cm=corner_means[corner]
+      if cm<(lthr) or cm>(uthr):
+        flags.append(1)
+      else:
+        flags.append(0)
+  else:
+    flags=flags+[1,1,1,1]
+  #evaluate
+  if 1 in flags[:4]:
+    err=logs.append(satellite,curr_datetime,"problem_l15","space corner suspicious; flagged: "+str(flags))
+    Cs_flag=1
+    X=[0,1,2,3,4,5,6,7]
+    if debug>0:
+      plt.plot(X,[uthr1,uthr1,uthr1,uthr1,uthr2,uthr2,uthr2,uthr2],"--",color="red",label="2sd")
+      plt.plot(X,[lthr1,lthr1,lthr1,lthr1,lthr2,lthr2,lthr2,lthr2],"--",color="red",label="2sd")
+      plt.plot(X,[mn1,mn1,mn1,mn1,mn2,mn2,mn2,mn2],"--",color="green",label="detector mean")
+      plt.errorbar(X,corner_means,yerr=corner_stds,fmt=".",label="corner means")
+      plt.show()
+    #redo VIS1
+    if usable[0]:
+      vals=values[0,:]
+      mn1,sd1,ad1 = comp_allan(vals[(vals>int(lthr1-1.5))&(vals<int(uthr1+1.5))])
+  elif 1 in flags[4:]:
+    err=logs.append(satellite,curr_datetime,"problem_l15","space corner suspicious; flagged: "+str(flags))
+    Cs_flag=1
+    #redo VIS2
+    if usable[1]:
+      vals=values[1,:]
+      mn2,sd2,ad2 = comp_allan(vals[(vals>int(lthr2-1.5))&(vals<int(uthr2+1.5))])
+  else:
+    Cs_flag=0
   #combine
-  a=np.divide(np.power(sd1,2)+np.power(sd2,2),2)
-  k0=np.divide(mn1+mn2,2)
-  u_all=np.sqrt(a+np.power(np.divide(mn1-mn2,2),2))
-  return u_all,k0
+  #u_all->measure of the noise level at earth counts
+  if not False in usable:
+    a=np.divide(np.power(ad1,2)+np.power(ad2,2),2)
+    u_all=np.sqrt(a+np.power(np.divide(mn1-mn2,2),2))
+    #k0->dark signal
+    k0=np.divide(mn1+mn2,2)
+  else:
+    if usable[0]:
+      u_all=ad1
+      k0=mn1
+    elif usable[1]:
+      u_all=ad2
+      k0=mn2
+    elif not True in usable:
+      err=logs.append(satellite,curr_datetime,"problem_easy","no valid spacecorner (masked?); ")
+      err=logs.append(satellite,curr_datetime,"problem_full","no valid spacecorner (masked?); ")
+      u_all=4
+      k0=0
+  #u_Cs -> appropriateness of space corner counts as dark signal for entire image
+    #std between means of 4 corners of detector 1
+  tmp1=np.std(corner_means[:4])
+    #std between means of 4 corners of detector 2
+  tmp2=np.std(corner_means[4:])
+    #std between means of detector 1 and 2
+  tmpD=np.std([np.mean(corner_means[:4]),np.mean(corner_means[4:])])
+    #combine (variance of each detector with variance between detectors)
+  if not False in usable:
+    u_Cs=np.sqrt(tmp1**2+tmp1**2+tmpD**2)
+  else:
+    if usable[0]:
+      u_Cs=tmp1
+    elif usable[1]:
+      u_Cs=tmp2
+    elif not True in usable:
+      u_Cs=2
+  return u_all,k0,u_Cs,Cs_flag
+
+def space_header_eval(sc_meanS_head,sc_meanN_head,sc_sdevS_head,sc_sdevN_head,logs,satellite,curr_datetime,debug=0):
+  corner_means=np.hstack([sc_meanS_head,sc_meanN_head])
+  corner_means=np.hstack([sc_meanS_head,sc_meanN_head])
+  #VIS1
+  mn1=np.mean(sc_meanS_head)
+  sd1=np.sqrt(np.sum(np.power(sc_sdevS_head,2))/2)
+  #VIS2
+  mn2=np.mean(sc_meanN_head)
+  sd2=np.sqrt(np.sum(np.power(sc_sdevN_head,2))/2)
+  #all
+  mn    = np.mean([mn1,mn2])
+  sd    = np.sqrt(0.5*(sd1**2+sd2**2)+((mn1-mn2)/2)**2)
+  usable=[True,True]
+  #Assumption: if mean is 0. detector was off (even though normally it is then -1)
+  if mn1<=0:#if only detector 2 was on
+    usable[0]=False
+    mn=mn2
+    sd=sd2
+  if mn2<=0:#if only detector 1 was on
+    usable[1]=False
+    mn=mn1
+    sd=sd1
+  #check corners
+  rigor=4#how many standard deviations for thresholds
+  uthr1=mn1+(rigor*sd1)
+  uthr2=mn2+(rigor*sd2)
+  lthr1=mn1-(rigor*sd1)
+  lthr2=mn2-(rigor*sd2)
+  #first sensor
+  flags=[]
+  if usable[0]:#if detector 1 was on check if all corners in range
+    uthr=uthr1
+    lthr=lthr1
+    for corner in [0,1,2,3]:
+      cm=corner_means[corner]
+      if cm<(lthr) or cm>(uthr):
+        flags.append(1)
+      else:
+        flags.append(0)
+  else:        #if detector 1 was off set all flags to 1
+    flags=[1,1,1,1]
+  #second sensor
+  if usable[1]:#if detector 1 was on check if all corners in range
+    uthr=uthr2
+    lthr=lthr2
+    for corner in [4,5,6,7]:
+      cm=corner_means[corner]
+      if cm<(lthr) or cm>(uthr):
+        flags.append(1)
+      else:
+        flags.append(0)
+  else:#if detector 1 was off set all flags to 1
+    flags=flags+[1,1,1,1]
+  #evaluate
+  if 1 in flags[:4]:#if any corner was flagged: something is strange -> mitigate
+    err=logs.append(satellite,curr_datetime,"problem_l15","header space corner suspicious; flagged: "+str(flags))
+    Cs_flag=1
+    X=[0,1,2,3,4,5,6,7]
+    if debug>0:
+      plt.plot(X,[uthr1,uthr1,uthr1,uthr1,uthr2,uthr2,uthr2,uthr2],"--",color="red",label="2sd")
+      plt.plot(X,[lthr1,lthr1,lthr1,lthr1,lthr2,lthr2,lthr2,lthr2],"--",color="red",label="2sd")
+      plt.plot(X,[mn1,mn1,mn1,mn1,mn2,mn2,mn2,mn2],"--",color="green",label="detector mean")
+      plt.errorbar(X,corner_means,yerr=corner_stds,fmt=".",label="corner means")
+      plt.show()
+    #redo VIS1 with corners that are not flagged
+    if usable[0]:
+      mn1=np.mean(sc_meanS_head[flags[:4]==0])
+      sd1=np.sqrt(np.sum(np.power(sc_sdevS_head[flags[:4]==0],2))/2)
+  elif 1 in flags[4:]:#if any corner was flagged: something is strange -> mitigate
+    err=logs.append(satellite,curr_datetime,"problem_l15","header space corner suspicious; flagged: "+str(flags))
+    Cs_flag=1
+    #redo VIS2 with corners that are not flagged
+    if usable[1]:
+      mn2=np.mean(sc_meanN_head[flags[4:]==0])
+      sd2=np.sqrt(np.sum(np.power(sc_sdevN_head[flags[:4]==0],2))/2)
+  else:
+    Cs_flag=0   #if no corner was flagged: evertything fine
+  #combine
+  #u_all->measure of the noise level at earth counts
+  if not False in usable: #if both detectors were switched on
+    a=np.divide(np.power(sd1,2)+np.power(sd2,2),2)
+    u_all=np.sqrt(a+np.power(np.divide(mn1-mn2,2),2))
+    #k0->dark signal
+    k0=np.divide(mn1+mn2,2)
+  else:#if only one detector was switched on
+    if usable[0]:
+      u_all=sd1
+      k0=mn1
+    elif usable[1]:
+      u_all=sd2
+      k0=mn2
+    elif not True in usable:#if no detector was switched on
+      err=logs.append(satellite,curr_datetime,"problem_easy","no valid header spacecorner; ")
+      err=logs.append(satellite,curr_datetime,"problem_full","no valid header spacecorner; ")
+      u_all=4
+      k0=0
+  #u_Cs -> appropriateness of space corner counts as dark signal for entire image
+    #std between means of 4 corners of detector 1
+  tmp1=np.std(corner_means[:4])
+    #std between means of 4 corners of detector 2
+  tmp2=np.std(corner_means[4:])
+    #std between means of detector 1 and 2
+  tmpD=np.std([np.mean(corner_means[:4]),np.mean(corner_means[4:])])
+    #combine (variance of each detector with variance between detectors)
+  if not False in usable:
+    u_Cs=np.sqrt(tmp1**2+tmp1**2+tmpD**2)
+  else:
+    if usable[0]:
+      u_Cs=tmp1
+    elif usable[1]:
+      u_Cs=tmp2
+    elif not True in usable:
+      u_Cs=2
+  return u_all,k0,u_Cs,Cs_flag
 
 def shot_noise(image,cf,Cs,srf,m2,debug):
   """
@@ -137,9 +384,12 @@ def digit_noise(head,inflated=1):
       u_dig=0.288675#https://www.wolframalpha.com/input/?i=standard+deviation+of+uniform+distribution+with+min%3D-0.5+and+max%3D0.5
     return u_dig
 
-
-def timing(lininfo,slot):
-  #calculate acquisiton time precisely
+def timing(lininfo,slot,v=1):
+  '''
+  fastest way to calculate acquisiton time precisely
+  v indicates whether lininfo is expected from 
+    image() (v=0) or image_3() (v=1) reader.
+  '''
   t=((slot/2.)-0.5)*60*60
   line=np.arange(2500)
   u_t=[]
@@ -150,16 +400,26 @@ def timing(lininfo,slot):
   nofit=0
   timscale=1
   for l in np.arange(0,2500):
-    flag=getattr(lininfo[l], 'shTimefitFlag')[0]
-    coef=getattr(lininfo[l], 'dsFitCoef')
-    frect=getattr(lininfo[l], 'shFirstRectPix')[0]
-    ffit=getattr(lininfo[l], 'shFirstFitPix')[0]
-    lrect=getattr(lininfo[l], 'shLastRectPix')[0]
-    lfit=getattr(lininfo[l], 'shLastFitPix')[0]
-    ftim=getattr(lininfo[l], 'dsTimeFirstRectPix')[0]
-    ltim=getattr(lininfo[l], 'dsTimeLastRectPix')[0]
-    maxdev=getattr(lininfo[l], 'dsMaxDevFit')[0]
-    
+    if v==0:
+      flag=getattr(lininfo[l], 'shTimefitFlag')[0]
+      coef=getattr(lininfo[l], 'dsFitCoef')
+      frect=getattr(lininfo[l], 'shFirstRectPix')[0]
+      ffit=getattr(lininfo[l], 'shFirstFitPix')[0]
+      lrect=getattr(lininfo[l], 'shLastRectPix')[0]
+      lfit=getattr(lininfo[l], 'shLastFitPix')[0]
+      ftim=getattr(lininfo[l], 'dsTimeFirstRectPix')[0]
+      ltim=getattr(lininfo[l], 'dsTimeLastRectPix')[0]
+      maxdev=getattr(lininfo[l], 'dsMaxDevFit')[0]
+    else:
+      flag=getattr(lininfo[l], 'shTimefitFlag')
+      coef=getattr(lininfo[l], 'dsFitCoef')
+      frect=getattr(lininfo[l], 'shFirstRectPix')
+      ffit=getattr(lininfo[l], 'shFirstFitPix')
+      lrect=getattr(lininfo[l], 'shLastRectPix')
+      lfit=getattr(lininfo[l], 'shLastFitPix')
+      ftim=getattr(lininfo[l], 'dsTimeFirstRectPix')
+      ltim=getattr(lininfo[l], 'dsTimeLastRectPix')
+      maxdev=getattr(lininfo[l], 'dsMaxDevFit')
     linetimes=np.zeros((2500))
     linemask=np.zeros((2500))
     linemask[ffit:lfit]=1
@@ -198,44 +458,6 @@ def timing(lininfo,slot):
   #plt.show()
   #print nofit,miss
   return np.divide(im,60*60),np.array(mask),np.array(maskvis),np.array(u_t)
-
-def acqtime(lininfo,linnr,pixnr):
-  buf=map(lambda x1,x2: map(lambda y1,y2: timefit(lininfo,y1,y2) , x1,x2), linnr,pixnr)
-  buf=np.array(buf)
-  atu=buf[:,:,0]
-  at=buf[:,:,1]
-  return at,atu
-
-def timefit(lininfo,linnr,pixnr):
-  pixnr=int(pixnr/2)
-  linnr=int(linnr/2)
-  #calculate acquisiton time precisely
-  #print linnr
-  flag=getattr(lininfo[int(linnr)], 'shTimefitFlag')
-  if flag[0]==5:
-    first=getattr(lininfo[int(linnr)], 'shFirstFitPix')[0]
-    last=getattr(lininfo[int(linnr)], 'shLastFitPix')[0]
-    coef=getattr(lininfo[int(linnr)], 'dsFitCoef')
-    print coef
-    #debug
-    #print 'dMaxDevFit: ',getattr(lininfo[int(linnr/2)], 'dMaxDevFit')
-    if pixnr>first and pixnr<last:#FIXME: what about the pixels outside fit-part
-      try:
-       #this is seconds after midnight:
-       tl=(coef[0] + coef[1]*pixnr + coef[2]*np.power(pixnr,2) + coef[3]*np.power(pixnr,3) + coef[4]*np.power(pixnr,4))
-       #tl=int((tl/60./60.)/timscale)
-       tl=tl/60.
-      except ValueError:
-       tl=np.nan
-      #tlu= int(abs(getattr(lininfo[int(linnr/2)], 'dMaxDevFit')[0]/60./60.)/timscale)
-      tlu= abs(getattr(lininfo[int(linnr/2)], 'dsMaxDevFit')[0]/60.)
-    else:
-      tl=np.nan
-      tlu=np.nan
-  else:
-    tl=np.nan
-    tlu=np.nan
-  return tlu,tl
 
 def dz_easy(x,dx,axis=0):
   """
@@ -281,10 +503,11 @@ def dz(pix,axis,d=1):
     return outplt.close()
 
 def reflectance(k,slope,intercept,sza,msk,irr,sundist):
-    radiance =  np.multiply ( slope  ,  np.subtract(  k  , intercept  ) )
-    z        =  np.radians(sza)
+    radiance =  np.multiply ( slope  ,  np.subtract(  k  , intercept  ) ) #[W m^-2 sr^-1]
+    z        =  np.radians(sza) #[rad]
     result   =  np.divide(np.multiply(np.pi  , np.multiply(radiance , np.power(sundist,2))),np.multiply(irr,np.cos(z)))
     try:
+      result[k<=0]=-9.
       result[msk==0]=-9.
     except TypeError:
       print "WARNING: scalar count value provided?"
@@ -292,6 +515,7 @@ def reflectance(k,slope,intercept,sza,msk,irr,sundist):
   
 def geolocation(trail,pix,timestamp,sat,debug=0,return_buffer=False):
       #FIXME: read landmark thresholds for current nom SSP
+      suspicious=0
       early=["MET2","MET3"]
       if sat in early:
         ul=64
@@ -305,6 +529,9 @@ def geolocation(trail,pix,timestamp,sat,debug=0,return_buffer=False):
       valuesx=[]
       bufflm=[]
       bump=getattr(trail[0], 'flAbsLandmarkResults')
+      #pickle.dump(bump, open('./tmp/bump.p', 'wb'))
+      #exit()
+      #bump=pickle.load( open('./tmp/bump.p', 'rb'))
       for lm in range(0,128):#int(NirCorr[0]+2)):
         buff=bump[lm*8:((lm+1)*8)-1]#get 8 bytes at current offset
         if buff[2] < 2500. and buff[3] < 2500.:
@@ -313,14 +540,21 @@ def geolocation(trail,pix,timestamp,sat,debug=0,return_buffer=False):
           px.append(buff[1])
           valuesy.append(buff[2])
           valuesx.append(buff[3])
-          #print buff
           bufflm.append(buff)
+      #if small number of landmarks, result may be wrong
+      if len(valuesx)<5:
+        suspicious=1
+      #if std of landmarkdeviations is high it is suspicious
+      if np.std(valuesx)>1. or np.std(valuesy)>1.:
+        suspicious=1
+      #compute rmse
       rmsX_vis=np.sqrt(((np.array(valuesx)*2) ** 2).mean())
       rmsY_vis=np.sqrt(((np.array(valuesy)*2) ** 2).mean())
       rmsX_ir=np.sqrt((np.array(valuesx) ** 2).mean())
       rmsY_ir=np.sqrt((np.array(valuesy) ** 2).mean())
-
-      
+      #if rmse of landmarks high geoloc is suspicious
+      if rmsX_vis>1.5 or rmsY_vis>1.5:
+        suspicious=1
       if debug==1:
         print "RMS of IR landmarks in X direction:"+str(rmsX_ir)
         print "RMS of IR landmarks in Y direction:"+str(rmsY_ir)
@@ -332,7 +566,7 @@ def geolocation(trail,pix,timestamp,sat,debug=0,return_buffer=False):
       if return_buffer:
         return np.array(bufflm),np.column_stack((py,px,valuesy,valuesx))
       else:
-        return rmsX_vis,rmsY_vis,rmsX_ir,rmsY_ir#np.array(bufflm),np.vstack((py,px,valuesy,valuesx))
+        return [rmsX_vis,rmsY_vis,rmsX_ir,rmsY_ir],suspicious#np.array(bufflm),np.vstack((py,px,valuesy,valuesx))
 
 def sensi_SZA(t,dt,DOY,m1,LAT,dLAT,LON,dLON,fill_value=0,debug=0):
   save=1
@@ -360,37 +594,62 @@ def sensi_SZA(t,dt,DOY,m1,LAT,dLAT,LON,dLON,fill_value=0,debug=0):
   del(SZA_ref)
   return s_sza_x
       
-def sensi_p(target,Ce,Cs,YSL,a0,a1,sza,E,d,Z=0):
+def sensi_p(target,Ce,Cs,YSL,co,sza,E,d,Z=0):
+  a0=co.a0
+  a1=co.a1
+  a2=co.a2
   sza=np.radians(sza)
-  def forCe(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
-    return np.divide(np.power(d,2)*np.pi*(a1*YSL+a0+Z) ,\
+  #p=pi, 
+  #d=distance_sun_earth, 
+  #f=solar_irradiance_vis, 
+  #z=solar_zenith_angle, 
+  #c=count_vis, 
+  #s= mean_count_space_vis, 
+  #a=a0_vis, 
+  #b=a1_vis, 
+  #t= years_since_launch, 
+  #r=0
+  def forCe(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(g*t^2+b*t+r+a))/(f*cos(z))
+    return np.divide(np.power(d,2)*np.pi*(a2*np.power(YSL,2)+a1*YSL+a0+Z) ,\
                               np.cos(sza)*E)
-  def forCs(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
-    return -np.divide(np.power(d,2)*np.pi*(a1*YSL+a0+Z) ,\
+  def forCs(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #-(d^2*p*(g*t^2+b*t+r+a))/(f*cos(z))
+    return -np.divide(np.power(d,2)*np.pi*(a2*np.power(YSL,2)+a1*YSL+a0+Z) ,\
                               np.cos(sza)*E)
-  def forE(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
-    return np.divide(np.power(d,2)*np.pi*(Cs-Ce)*(a1*YSL+a0+Z) ,\
+  def forE(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #-(d^2*p*(c-s)*(g*t^2+b*t+r+a))/(cos(z)*f^2)
+    return -np.divide(np.power(d,2)*np.pi*(Ce-Cs)*(a2*np.power(YSL,2)+a1*YSL+a0+Z) ,\
                               np.cos(sza)*np.power(E,2))
-  def forSZA(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
-    return np.divide(np.divide(np.power(d,2)*np.pi*(Cs-Ce)*(a1*YSL+a0+Z)*np.sin(sza),\
+  def forSZA(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(c-s)*(g*t^2+b*t+r+a)*sin(z))/(f*cos(z)^2)
+    return np.divide(np.divide(np.power(d,2)*np.pi*(Ce-Cs)*(a2*np.power(YSL,2)+a1*YSL+a0+Z)*np.sin(sza),\
                               np.power(np.cos(sza),2)*E),180)*np.pi
-  def fora0(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
+  def fora0(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(c-s))/(f*cos(z))
     return np.divide(np.power(d,2)*np.pi*(Ce-Cs),\
                               np.cos(sza)*E)
-  def fora1(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
+  def fora1(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(c-s)*t)/(f*cos(z))
     return np.divide(np.power(d,2)*np.pi*(Ce-Cs)*YSL,\
                               np.cos(sza)*E)
-  def forZ(d,Ce,Cs,a0,a1,YSL,sza,E,Z):
+  def fora2(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(c-s)*t^2)/(f*cos(z))
+    return np.divide(np.power(d,2)*np.pi*(Ce-Cs)*np.power(YSL,2),\
+                              np.cos(sza)*E)
+  def forZ(d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z):
+    #(d^2*p*(c-s))/(f*cos(z))
     return np.divide(np.power(d,2)*np.pi*(Ce-Cs),\
                               np.cos(sza)*E)
-  
   options= {  
               "Ce"  :  forCe,
+              "digit"  :  forCe,
               "Cs"  :  forCs,
               "E"   :  forE,
               "SZA" :  forSZA,
               "a0"  :  fora0,
               "a1"  :  fora1,
+              "a2"  :  fora2,
               "Z"   :  forZ,
             }
-  return options[target](d,Ce,Cs,a0,a1,YSL,sza,E,Z)
+  return options[target](d,Ce,Cs,a0,a1,a2,YSL,sza,E,Z)

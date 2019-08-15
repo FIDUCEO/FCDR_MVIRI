@@ -21,11 +21,9 @@ import matplotlib.pyplot as plt
 import ricals_effects as ef
 
 from fiduceo.fcdr.writer.fcdr_writer import FCDRWriter
-from fiduceo.fcdr.writer.default_data import DefaultData
-from fiduceo.fcdr.writer.templates.templateutil import TemplateUtil as tu
+from fiduceo.common.writer.default_data import DefaultData
+from fiduceo.common.writer.templates.templateutil import TemplateUtil as tu
 
-
-sys.path.insert(0, os.getcwd()[:-4]+'/lib/nrCrunch/')
 import cruncher as cr
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -70,16 +68,12 @@ def ncName(s_Year,s_Month,s_Day,s_Time,dset,nomlon,ProcVersion,FormVersion,satel
     
   return fname
 
-def write_manager( outnc,filename,head1,head2,head3,lininfo,trail,telem,telem_descr, \
-                   images, uncert, refl_aux, calfile_content,dimvals,comment,rel,m2,pixel_mask,Software,satellite, debug=0):
-  if debug>0:
-     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-     print "Format Release: "
-     print rel
- 
-  timing=[]
-  timing.append(timeit.default_timer())
-  
+def write_manager( mfggrp,filename,head1,head2,head3,lininfo,trail,telem,telem_descr, \
+                   satellite, logs, debug=0):
+  '''
+  This function organizes the writing of the complex fullFCDR files
+  '''
+
   # Reading the excel file which gives information on whether attribute or variable
   store_info = np.genfromtxt('../config/vars_for_ricals.csv', names=True,delimiter=';',dtype=None)
 
@@ -87,44 +81,7 @@ def write_manager( outnc,filename,head1,head2,head3,lininfo,trail,telem,telem_de
     print np.shape( store_info )
 
   namelin = lininfo[0]._asdict().keys()
-  
-  try:
-    if float(rel)<2.0:
-      #mfggrp = nc.Dataset(outnc, 'w', format = 'NETCDF4')
-      writer = FCDRWriterInternal()
-      mfggrp = writer.createTemplateBasic("MVIRI", 12835)
-    else:
-      writer = FCDRWriter()
-      mfggrp = writer.createTemplateFull("MVIRI", 12835)
-  except IOError:
-    print "ERROR: could not create file: " + outnc
-    exit()
-    
-  # adding global attributes
-  mfggrp = writer.createTemplateFull("MVIRI", 12835)
-  
-  mfggrp.attrs["institution"] = "EUMETSAT"
-  mfggrp.attrs["title"] = "MVIRI Full FCDR"
-  mfggrp.attrs["source"] = "Produced from UMARF RECT2LP and IMAG2TG data with MVIRI FCDR code RICalPy, version "+str(Software)
-  mfggrp.attrs["history"] = "Created: " + time.ctime(time.time())
-  mfggrp.attrs["references"] = "in preparation"
-  mfggrp.attrs["comment"] = comment
-  mfggrp.attrs["authors"] = "Frank Ruethrich, Viju John, Rob Roebeling and Joerg Schulz"
-  mfggrp.attrs["email"] = "frank.ruethrich@eumetsat.int"
-  mfggrp.attrs["satellite"] = satellite
-  mfggrp.attrs["url"] = "http://www.fiduceo.eu"
-  mfggrp.attrs["fcdr_software_version"] = str(Software)
-  mfggrp.attrs["data_version"] = str(rel)
-  mfggrp.attrs["RECT2LP_file_name"] = os.path.basename(filename)
-  mfggrp.attrs["channels"]          = "vis, ir, wv"
-  mfggrp.attrs["description"]       = "Meteosat First Generation Rectified (Level 1.5) Image"
-  
-  print 'Writing binary_mask'
-  mfggrp.variables["quality_pixel_bitmask"].data[:,:]                   = np.fliplr(pixel_mask)
-  
-  print 'Writing IR/WV Calib'
-  write_calfile2nc( mfggrp, calfile_content[0], calfile_content[1],\
-                            calfile_content[2], calfile_content[3])
+
   print 'Writing Header 1'
   write_head2nc(mfggrp, head1, 'header1_', store_info)
 
@@ -143,115 +100,7 @@ def write_manager( outnc,filename,head1,head2,head3,lininfo,trail,telem,telem_de
   print 'Writing Telemetry'
   write_telem2nc( mfggrp, telem, telem_descr )
   
-  print 'Writing Uncertainties'
-  write_uncert( mfggrp, uncert, dimvals, rel , m2)
-
-  print 'Writing AUX'
-  write_aux(mfggrp,refl_aux,dimvals,rel)
-  
-  print 'Writing Images'
-  write_images( mfggrp, images, head1, dimvals, rel )
-  
-  writer.write( mfggrp, outnc )
-
-  timing.append(timeit.default_timer())
-  print "writing took: "+str(timing[1]-timing[0])
-
-def write_images(mfggrp,images,head1,dimvals,rel,debug=0):
-  
-  ##- Finding offset in time seconds since epoch to start of slot 
-  time_tup = ( head1['iYear'][0], 1, head1['iYday'][0], 0, head1['iSlotNum'][0] * 30. -30., 0 )
-  if debug>=1:
-    print time_tup, head1['iSlotNum'][0]
-  time_offset  =  calendar.timegm( time_tup ) 
-  if debug>=1:
-    print calendar.timegm( time_tup )
-  ##-------------  
-  
-  if float(rel)<2.0:
-    image_names = ('count_vis', 'count_ir', 'count_wv', 'time')
-    
-    image_scale_factor = ( 1.  , 1.  , 1.  , 0.1)
-    
-    image_add_offset   = (0.0, 0.0, 0.0, time_offset)
-    
-    #-32768
-    
-    #data_type   =  ('u1', 'u1', 'u1','u2')
-  else:
-    #image_names = ('counts_vis', 'counts_ir', 'counts_wv', 'toa_bidirectional_reflectance_vis', 'sensor_zenith_angle', \
-                  #'sensor_azimuth_angle', 'solar_zenith_angle', 'solar_azimuth_angle', 'time')
-    image_names = ('count_vis', 'count_ir', 'count_wv', \
-                  'solar_zenith_angle', 'solar_azimuth_angle', 'time')
-    #image_long_name = ('counts_vis', 'counts_ir', 'counts_wv', 'reflectance_vis', 'sensor_zenith_angle', \
-                  #'sensor_azimuth_angle', 'solar_zenith_angle', 'solar_azimuth_angle', 'acquisition time of pixel')
-    
-    #image_unit = ('1', '1', '1', '1', 'degrees', \
-                  #'degrees', 'degrees', 'degrees', 'seconds since 1970-01-01 00:00:00')
-    
-    image_scale_factor = ( 1.  , 1.  , 1.   , 0.001, 0.01, \
-                          0.01, 0.01, 0.01 , 0.1)
-
-    image_add_offset   = (0.0, 0.0, 0.0, 0.0, 0.0, \
-                          0.0, 0.0, 0.0, time_offset)
-    
-    #image_fillvalue    = (255, 255, 255, -32768, 65535, \
-                          #65535, 65535, 65535, 65535)
-    
-    #-32768
-    
-    #data_type   =  ('u1', 'u1', 'u1', 'i2', 'u2', 'u2', 'u2', 'u2', 'u2')
-  
-  for item in range(len(images)):
-    if debug>=1:
-      print image_names[item]
-      print mfggrp.variables[image_names[item]].attrs
-    if not "degree" in mfggrp.variables[image_names[item]].attrs["units"]:
-      image_fillvalue=mfggrp.variables[image_names[item]].attrs["_FillValue"]
-    
-    try:#first try to get template's scaling
-      scale_factor = mfggrp.variables[image_names[item]].attrs["scale_factor"]
-      add_offset   = mfggrp.variables[image_names[item]].attrs["add_offset"]
-    except KeyError:#if not defined get it from hardcoded dict
-      scale_factor = image_scale_factor[item]
-      add_offset   = image_add_offset[item]
-      mfggrp.variables[image_names[item]].attrs["scale_factor"] = scale_factor
-      mfggrp.variables[image_names[item]].attrs["add_offset"]   = add_offset
-     
-    #shape = np.shape(images[item])
-    #if shape[0]>2500:
-      #dimX="x_vis"
-      #dimY="y_vis"
-    #else:
-      #dimX="x_ir_wv"
-      #dimY="y_ir_wv"
-    
-    image_inp  =  np.array( images[item] )
-
-    if image_names[item] == "toa_bidirectional_reflectance_vis":
-      image_inp[image_inp < 0] = image_fillvalue
-      image_inp[image_inp > 2] = image_fillvalue
-      
-    if image_names[item] == "acquisition_time":
-      if debug>=1:
-        print np.amin( image_inp ), np.amax( image_inp )
-      image_inp = (image_inp * 60. * 60.) - ((head1['iSlotNum'][0] * 30. * 60) - (30. * 60.) )
-    if debug>=1:
-      print np.amin( image_inp ), np.amax( image_inp )
-      
-    image_inp[image_inp < (-360)] = image_fillvalue
-    
-    image_inp  =  ( image_inp / scale_factor ) - add_offset
-    #print np.amin( image_inp ), np.amax( image_inp )
-
-    mfggrp.variables[image_names[item]].data = np.fliplr(image_inp)
-    #ok[:] = image_inp
-
-    #setattr(ok, 'long_name', image_long_name[item] )
-    #setattr(ok, 'units', image_unit[item] )
-    #setattr(ok, 'scale_factor', image_scale_factor[item] )
-    #setattr(ok, 'add_offset', image_add_offset[item] )
-
+  return 0
 
 
 def write_calfile2nc( mfggrp, data, names, unit, lname):
@@ -261,7 +110,7 @@ def write_calfile2nc( mfggrp, data, names, unit, lname):
   """
   for i,v,u,l in zip(names, data, unit, lname):
     dtype = 'f4'
-    full_name  = i
+    full_name  = str(i)
     long_name  = l
     scales     = 1
     size       = 1
@@ -270,8 +119,6 @@ def write_calfile2nc( mfggrp, data, names, unit, lname):
     except KeyError:
       mfggrp.variables[full_name.replace("sigma","u")].data=v
   return
-
-
 
 def write_head2nc( mfggrp, data, name, store_info ):
   """
@@ -283,19 +130,15 @@ def write_head2nc( mfggrp, data, name, store_info ):
         if (not "Spare" in i) and (not "spare" in i):
             if i[:2] == "sh":
                 full_name = name + i[2:]
-                #dtype = 'i2'
                 dtype = np.uint16
             if i[:2] == "fl":
                 full_name = name + i[2:]
-                #dtype = 'f4'
                 dtype = np.float32
             if i[:2] == "ds":
                 full_name = name + i[2:]
-                #dtype ='f8'
                 dtype = np.float64
             if i[:1] == "i":
                 full_name = name + i[1:]
-                #dtype ='i4'
                 dtype = np.uint32
             if i[:2] == "sz":
                 full_name = name + i[2:]
@@ -303,30 +146,26 @@ def write_head2nc( mfggrp, data, name, store_info ):
                 v = ''.join(v)
             if i[:2] == "by":
                 full_name = name + i[2:]
-                #dtype = "u1"
                 dtype = np.ubyte
-            
-            #print store_info['name'].tolist().index(full_name)
+
             j=store_info['name'].tolist().index(full_name)
 
             s_i=store_info[j]
 
             long_name  =  s_i[1]
             scales=float(s_i[10])
-            #print scales
-
-            ## I have to add certain variables as global attributes. 
-            ## Also repeated variables in headers and trailers must kept only once
+            
+            # Have to add certain variables as global attributes. 
+            # Also repeated variables in headers and trailers must kept only once
             
             #Some preparations
             if scales!=1:
                 if v.isalnum():
                     try:
                       v=float(v)*scales
-                      #print v
                     except:
-                      v=0.0
-                    dtype=np.float32#"f4"
+                      v=np.nan
+                    dtype=np.float32
 
             #STORING
             if s_i[8] == 1:#store current item? 1=yes
@@ -343,102 +182,85 @@ def write_head2nc( mfggrp, data, name, store_info ):
                         
                     tu.add_fill_value(variable, fillval)
                     variable.attrs["long_name"] = long_name
-                    #tu.add_units(variable, "count")
                     mfggrp[full_name] = variable
-            
                     #Store data
                     mfggrp.variables[full_name].data   = v
-
                 elif s_i[9] == 0:
                     mfggrp.attrs[full_name]=v
 
 def write_lineinfo2nc( mfggrp, data, name ):
-    temp = 'lineinfo_'
-    
-    for v in name:
-        #print v
-        linvar = []
-        for i in data:
-            linvar.append( getattr(i, v) )
-        
-        linvar=np.array(linvar)
-        
-        if (not "Spare" in v) and (not "spare" in v):
-            
-            #print np.shape(linvar)    
-
-            if v[:2] == "sh":
-                #print temp + v[2:], 'i2'
-                #mfggrp.createDimension('dim_' + temp + v, np.size(linvar))
-                #ok = mfggrp.createVariable(temp + v[2:], 'i2', (('dim_'+temp + v),))
-                dtype=np.uint16
-                fillval=DefaultData.get_default_fill_value(dtype)
-                full_name=v[2:]
-                default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
-                variable = Variable(["y_" + str(np.size(linvar))], default_array)
-                values=linvar[:,0]
-            if v[:2] == "fl":
-                #print temp + v[2:], 'f4'
-                dtype=np.float32
-                fillval=DefaultData.get_default_fill_value(dtype)
-                if "TimesArray" in v:
-                    full_name=v[1:]
-                    default_array = DefaultData.create_default_array(np.shape(linvar)[1],np.shape(linvar)[0], dtype)
-                    #variable = Variable(["y_"+temp + full_name,"x_"+temp + full_name], default_array)
-                    variable = Variable(["y_" + str(np.shape(linvar)[0]),"x_"+str(np.shape(linvar)[1])], default_array)
-                    values=linvar[:,:]
-                else:
-                    full_name=v[2:]
-                    default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
-                    #variable = Variable(["y_"+temp + full_name], default_array)
-                    variable = Variable(["y_" + str(np.size(linvar))], default_array)
-                    values=linvar[:,0]
-                
-            if v[:2] == "ds":
-                #print temp + v[2:], 'f8'
-                dtype=np.float64
-                fillval=DefaultData.get_default_fill_value(dtype)
-                full_name=v[2:]
-                if "FitCoef" in v:
-                    default_array = DefaultData.create_default_array(np.shape(linvar)[1],np.shape(linvar)[0], dtype)
-                    variable = Variable(["y_" + str(np.shape(linvar)[0]),"x_" + str(np.shape(linvar)[1])], default_array)
-                    values=linvar[:,:]
-                else:
-                    default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
-                    variable = Variable(["y_" + str(np.size(linvar))], default_array)
-                    values=linvar[:,0]
-
-                
-            if v[:1] == "i": 
-                #print temp + v[1:], 'i4'
-                dtype=np.int32
-                fillval=DefaultData.get_default_fill_value(dtype)
-                full_name=v[1:]
-                default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
-                variable = Variable(["y_"+ str(np.size(linvar))], default_array)
-                values=linvar[:,0]
-                
-            tu.add_fill_value(variable, fillval)
-            #variable.attrs["long_name"] = long_name
-            #tu.add_units(variable, "count")
-            mfggrp[temp + full_name] = variable
-    
-            #Store data
-            mfggrp.variables[temp + full_name].data   = values
+  '''
+  This function writes lineinfos to an open netcdf file
+  Note: Does not have to be predefined in the netcdf template
+  HISTORY:
+  -originally designed to treat data as containing lininfo from image() reading function
+  -XX.XX.2017 modified to handle xarray netcdf4 object
+  -27.12.2017 modified to treat data as containing lininfo from image_3() reading function
+  '''
+  temp = 'lineinfo_'
+  for v in name:
+      linvar = []
+      for i in data:
+          linvar.append( getattr(i, v) )
+      linvar=np.array(linvar)
+      if (not "Spare" in v) and (not "spare" in v):
+          if v[:2] == "sh":
+              dtype=np.uint16
+              fillval=DefaultData.get_default_fill_value(dtype)
+              full_name=v[2:]
+              default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
+              variable = Variable(["y_" + str(np.size(linvar))], default_array)
+              values=linvar
+          if v[:2] == "fl":
+              dtype=np.float32
+              fillval=DefaultData.get_default_fill_value(dtype)
+              if "TimesArray" in v:
+                  full_name=v[1:]
+                  default_array = DefaultData.create_default_array(np.shape(linvar)[1],np.shape(linvar)[0], dtype)
+                  variable = Variable(["y_" + str(np.shape(linvar)[0]),"x_"+str(np.shape(linvar)[1])], default_array)
+                  values=linvar
+              else:
+                  full_name=v[2:]
+                  default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
+                  variable = Variable(["y_" + str(np.size(linvar))], default_array)
+                  values=linvar
+              
+          if v[:2] == "ds":
+              dtype=np.float64
+              fillval=DefaultData.get_default_fill_value(dtype)
+              full_name=v[2:]
+              if "FitCoef" in v:
+                  default_array = DefaultData.create_default_array(np.shape(linvar)[1],np.shape(linvar)[0], dtype)
+                  variable = Variable(["y_" + str(np.shape(linvar)[0]),"x_" + str(np.shape(linvar)[1])], default_array)
+                  values=linvar
+              else:
+                  default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
+                  variable = Variable(["y_" + str(np.size(linvar))], default_array)
+                  values=linvar
+          if v[:1] == "i": 
+              dtype=np.int32
+              fillval=DefaultData.get_default_fill_value(dtype)
+              full_name=v[1:]
+              default_array = DefaultData.create_default_vector(np.size(linvar), dtype)
+              variable = Variable(["y_"+ str(np.size(linvar))], default_array)
+              values=linvar
+          tu.add_fill_value(variable, fillval)
+          mfggrp[temp + full_name] = variable
+          #Store data
+          mfggrp.variables[temp + full_name].data   = values
 
 def write_telem2nc( mfggrp, data, descr ):
+    '''
+    This function writes extracted telemetry to an open netcdf file
+    Note: Does not have to be predefined in the netcdf template
+    '''
     temp = 'telem'
     names = data.dtype.names
-
-    #mfggrp.createDimension( 'dim_telem', 4 )
-
     badnames = ['index', 'jday', 'HH', 'MM', 'SS', 'QA', 'missing', 'Frame']
     for name in names:
-      #print name
       if not name in badnames:
         try:
           telem_des     =  descr[name]
-          # print telem_des
           valid_telem   =  data[name][(data["QA"]==0)&(data["index"]!=0)]
           mean_telem    =  np.mean(valid_telem)  
           median_telem  =  np.median(valid_telem)  
@@ -446,104 +268,69 @@ def write_telem2nc( mfggrp, data, descr ):
           num_telem     =  len(valid_telem)
           telem2wr = [mean_telem, median_telem, std_telem, num_telem]
         except:
-          telem2wr = [0, 0, 0, 0]
+          telem2wr = [np.nan,np.nan,np.nan,np.nan]
         dtype=np.float32
         fillval=DefaultData.get_default_fill_value(dtype)
         default_array = DefaultData.create_default_vector(np.size(telem2wr), dtype)
         variable = Variable(["x_4"], default_array)
-                        
         tu.add_fill_value(variable, fillval)
         variable.attrs["long_name"] = telem_des
         mfggrp[temp +"_"+ name] = variable
-
         #Store data
         mfggrp.variables[temp +"_"+ name].data   = telem2wr
 
-        
-        
-        
-
-#def write_var2nc( mfggrp, data, varname, unit, descr ):
-#  mfggrp.createDimension( 'dim_', 4 )
 
 def write_uncert(mfggrp,uncert,dimvals,rel,m2,debug=0):
-   ### writing uncertainties...
-  debug=1
+  '''
+  writing uncertainties
+  Note: this has to be predefined in the netcdf template if Release>2
+  HISTORY:
+  5.1.2018: modified to match new writer in case of Release>2
+  '''
   if float(rel) < 2.0:
     unc_names      =  ( 'u_a0_vis','u_a1_vis',"u_digitization_counts_vis")
-    #unc_long_names =  ( 'uncertainty_calibration_parameter a0 - vis channel', \
-                        #'uncertainty_calibration_parameter a1 - vis channel', \
-                        #'covariance_spectral_response_function - vis channel' )
-    #unc_units      =  ( 'Wm-2Sr-1/DC','Wm-2Sr-1/DC/Y')
-    
     unc_scale_factor = ( 1.0, 1.0, 1.0)
     unc_add_offset   = ( 0.0, 0.0, 0.0)
-    
-    #unc_data_type    =  ( 'f4', 'f4','f4')
-
   else:
     unc_names      =  ( 'u_solar_irradiance_vis', 'covariance_spectral_response_function_vis', 'u_a0_vis',  \
                         'u_a1_vis','covariance_a0_a1_vis','u_latitude', 'u_longitude', 'u_time', \
                         'u_solar_zenith_angle', \
                         "u_digitization_counts_vis" )
-    #unc_std_names  =  ( 'u_solar_irradiance_vis', 'covariance_spectral_response_function_vis', 'u_a0_vis',  \
-                        #'u_a1_vis','covariance_a0_a1_vis','u_latitude', 'u_longitude', 'u_time', \
-                        #'u_solar_zenith_angle', \
-                        #'u_toa_bidirectional_reflectance_vis' )
-    #unc_long_names =  ( 'uncertainty_solar_irradiance_vis', 'covariance_spectral_response_function_vis', \
-                        #'uncertainty_calibration_parameter a0 - vis channel', \
-                        #'uncertainty_calibration_parameter a1 - vis channel', \
-                        #'covariance_calibration_parameters (a0 and a1 - vis channel)', \
-                        #'uncertainty_latitude', 'uncertainty_longitude', 'uncertainty_time', \
-                        #'uncertainty_SZA','uncertainty_BRF_(RMS)')
-    #unc_units      =  ( 'Wm-2', 'micrometre', 'Wm-2Sr-1/DC', 'Wm-2Sr-1/DC','Wm-2Sr-1/DC/Y', \
-                        #'-1 (see use maunual for correct units)','degree_north', 'degree_east',\
-                        #'seconds','degree','1')
-  
-    unc_scale_factor = ( 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 )
-    unc_add_offset   = ( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 )
-    
-    #unc_data_type    =  ( 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4', 'f4' )
-    
-  #unc_fillvalue    =  9.96920996839e+36
-  
   for item in range(len(uncert)):
     if debug>=1:
       print unc_names[item]
-      
-    #print unc_names[item]
     unc_inp  =  np.array( uncert[item] )
-    #print np.shape(unc_inp)
-    
     if debug>=1:
      print np.amin( unc_inp ), np.amax( unc_inp )
-
-    try:
-      unc_data_type=mfggrp.variables[unc_names[item]].dtype
-    except KeyError:
-      print mfggrp.keys()
-      exit()
-    try:#first try to get template's scaling
-      scale_factor = mfggrp.variables[unc_names[item]].attrs["scale_factor"]
-      add_offset   = mfggrp.variables[unc_names[item]].attrs["add_offset"]
-    except KeyError:#if not defined get it from hardcoded dict
+    if float(rel) < 2.0:
+      try:
+        unc_data_type=mfggrp.variables[unc_names[item]].dtype
+      except KeyError:
+        print mfggrp.keys()
+        exit(2)
+    if float(rel) < 2.0:
       scale_factor = unc_scale_factor[item]
       add_offset   = unc_add_offset[item]    
       mfggrp.variables[unc_names[item]].attrs["scale_factor"] = scale_factor
       mfggrp.variables[unc_names[item]].attrs["add_offset"]   = add_offset
-    print np.mean(unc_inp)
-    unc_inp  =  ( unc_inp / scale_factor ) - add_offset
+      unc_inp  =  ( unc_inp / scale_factor ) - add_offset
     #for ulat/lon also set fillvalues
     if( unc_names[item] == "u_latitude" or unc_names[item] == "u_longitude" ):
-      unc_fillvalue        = mfggrp.variables[unc_names[item]].attrs['_FillValue']
-      unc_inp[m2==0] = unc_fillvalue
-    #print np.amin( image_inp ), np.amax( image_inp )
+      if float(rel) < 2.0:
+        unc_fillvalue        = mfggrp.variables[unc_names[item]].attrs['_FillValue']
+        unc_inp[m2==0] = unc_fillvalue
+      else:
+        unc_fillvalue=np.nan#DefaultData.get_default_fill_value(unc_inp.dtype)
+        unc_inp[m2==0] = unc_fillvalue
     if debug>=1:
       print np.shape(unc_inp)
-    try:
-      mfggrp.variables[unc_names[item]].data = np.fliplr(np.array( unc_inp )).astype(unc_data_type)
-    except ValueError:
-      mfggrp.variables[unc_names[item]].data = np.array( unc_inp ).astype(unc_data_type)
+    if float(rel) < 2.0:
+      try:
+        mfggrp.variables[unc_names[item]].data = np.fliplr(np.array( unc_inp )).astype(unc_data_type)
+      except ValueError:
+        mfggrp.variables[unc_names[item]].data = np.array( unc_inp ).astype(unc_data_type)
+    else:
+      mfggrp.variables[unc_names[item]].data = np.array( unc_inp )
 
 def write_aux(mfggrp,refl_aux,dimvals,rel,debug=0):
   ### Writing auxiliary data needed for computation of reflectance
@@ -564,7 +351,7 @@ def write_aux(mfggrp,refl_aux,dimvals,rel,debug=0):
   else:
   
     refl_aux_names = ('distance_sun_earth', 'solar_irradiance_vis', \
-                      'spectral_response_function_vis', 'allan_deviation_counts_space_vis', 'mean_count_space_vis', \
+                      'allan_deviation_counts_space_vis', 'mean_count_space_vis', \
                       #'sub_sat_latitude_start', \ #FIXME: have to be added to writer template
                       #'sub_sat_longitude_start', 'sub_sat_latitude_end', 'sub_sat_longitude_end', \
                       'years_since_launch', 'a0_vis', 'a1_vis' )
@@ -668,7 +455,7 @@ def save_static( filename,nomlon,varnames,vals,m1,comment,rel,debug=0):
       #if lats/lons are written do this:+++++++++++++++++++++++++++++++++++++++
       else:
         print varname
-        val=np.fliplr(val) #FIXME: should be done also for sensitivities
+        val=val
         val[val<(-180)]=nc.default_fillvals['i2']
         if np.shape(val)[0]>2500:
           if debug>=1:
@@ -691,7 +478,7 @@ def save_static( filename,nomlon,varnames,vals,m1,comment,rel,debug=0):
         arr.fill_value=nc.default_fillvals['i2']
         #fill content
         if debug>=2:
-          to.printimage(np.fliplr(val),varname,mini=-90,maxi=90)
+          to.printimage(val,varname,mini=-90,maxi=90)
         arr[:]=val
 
 #----------------------------------------------------------------------------
@@ -998,90 +785,38 @@ def ncdump(nc_fid, verb=True):
     return nc_attrs, nc_dims, nc_vars, nc_units, nc_lnames
 
 
-def read_calfile(calfile,satellite,doy,s_datestring,s_Time,debug=0):
+def read_calfile(calfile,satellite,doy,s_datestring,s_Time,logs,debug=0):
   """
-  Content of calfile_content:
-  day_number,a_ir(time),b_ir(time),sigma_a_ir(time),sigma_b_ir(time),q_ir(time),
-  chi_sq_ir(time),n_ir(time),rmsd_ir(time),corr_ir(time),min_mon_cnt3_ir(time),
-  max_mon_cnt3_ir(time),min_ref_rad_ir(time),max_ref_rad_ir(time),
-  num_per_bin_ir(time, nbin)a_wv(time)b_wv(time),sigma_a_wv(time),sigma_b_wv(time),
-  q_wv(time),chi_sq_wv(time),n_wv(time),rmsd_wv(time),corr_wv(time),
-  min_mon_cnt3_wv(time),max_mon_cnt3_wv(time),min_ref_rad_wv(time),
-  max_ref_rad_wv(time),num_per_bin_wv(time, nbin)
-  Of those are to be stored: [1,2,3,4,5,15,16,17,18,19]
+  calfile_content:
+  [u'year', u'month', u'day', u'slot', u'julian_time', u'a_ir', u'b_ir', u'a_wv', u'b_wv']
+  NOTE: slot  umber in calfile is wrong! use julian time (end of slot) for indexing.
   """
+  d=datetime.datetime.strptime(s_datestring+s_Time, '%Y%m%d%H%M')
+  jultime=to.julian_day(d)
   with nc.Dataset( calfile ) as cal_data:
     nc_attrs, nc_dims, nc_vars, nc_units, nc_lnames= ncdump(cal_data,verb=False)
-    if debug>=2:
-      print nc_attrs, nc_dims, nc_vars, nc_units, nc_lnames
-    #nc_attrs, nc_dims, nc_vars, nc_units, nc_lnames
+    try:
+      jultimes = cal_data.variables["julian_time"][:]
+    except:
+      err=logs.update(satellite,curr_datetime,"status_easy",-1)
+      err=logs.update(satellite,curr_datetime,"problem_easy","strange thing with IR calfile")
+      err=logs.update(satellite,curr_datetime,"status_full",-1)
+      err=logs.update(satellite,curr_datetime,"problem_full","strange thing with IR calfile")
+      raise
+    ix= (np.abs(jultimes - jultime)).argmin()
     calfile_content = []
     calfile_names   = []
     calfile_units   = []
     calfile_lnames  = []
-    idx=range(len(nc_vars))
-    for i,var,unit,lnm in zip(idx,nc_vars,nc_units,nc_lnames):
-      if debug>=2:
-          print i
-          
-      if (i >=1 and i <=5) or (i>=15 and i <=19):
-        if debug>=2:
-          print i
-          print var
-          print cal_data.variables[var][:]
-        tmp=cal_data.variables[var][doy]#read
-        if not tmp:#check if masked
-          print "WARNING: calfile variable "+var+" masked at current day of year"
-          doy_ffw=doy
-          doy_bw =doy
-          #forward:
-          offset=0
-          while not tmp and abs(offset)<10:
-            if debug>=1:
-              print tmp
-            offset=offset+1
-            doy_ffw=doy_ffw+offset
-            try:
-              tmp=cal_data.variables[var][doy_ffw]
-            except IndexError:
-              doy_ffw=offset
-              s_datestring_ffw=str(int(s_datestring[:4])+1)+"0101"
-              calfile_ffw = to.findcal(satellite,s_datestring,s_Time)
-              if debug>=1:
-                print "WARNING: searching in calfile: "+calfile_ffw
-                print "DOY: "+str(doy_ffw)
-              with nc.Dataset( calfile_ffw ) as cal_data_ffw:
-                tmp=cal_data_ffw.variables[var][doy_ffw]
-          tmp_ffw=tmp#store
-          tmp=cal_data.variables[var][doy]#"rewind"
-          #backward:
-          offset=0
-          while not tmp and abs(offset)<10:
-            offset=offset+1
-            doy_bw=doy_bw-offset
-            try:
-              tmp=cal_data.variables[var][doy_bw]
-            except IndexError:
-              doy_bw=366-offset
-              s_datestring_bw=str(int(s_datestring[:4])-1)+"1231"
-              calfile_bw = to.findcal(satellite,s_datestring,s_Time)
-              if debug>=1:
-                print "WARNING: searching in calfile: "+calfile_bw
-                print "DOY: "+str(doy_bw)
-              with nc.Dataset( calfile_bw ) as cal_data_bw:
-                tmp=cal_data_bw.variables[var][doy_bw]
-          tmp_bw=tmp
-          if abs(doy_bw)<doy_ffw:
-            tmp=tmp_bw
-          else:
-            tmp=tmp_ffw
-        calfile_content.append(tmp)
-        calfile_names.append(var)
-        calfile_units.append(unit)
-        calfile_lnames.append(lnm)
+    for var,unit,lnm in zip(nc_vars,nc_units,nc_lnames):
+        if var in 'a_ir b_ir a_wv b_wv':
+          tmp=cal_data.variables[var][ix]#read
+          calfile_content.append(tmp)
+          calfile_names.append(var)
+          calfile_units.append(unit)
+          calfile_lnames.append(lnm)
     if debug>=2: 
       print calfile_content
-    
     return (calfile_content,calfile_names,calfile_units,calfile_lnames)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

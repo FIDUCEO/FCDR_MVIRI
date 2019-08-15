@@ -15,14 +15,42 @@ def find_nearest(arraylat,arraylon,valuelat,valuelon):
     print idxY,idxX
     print "LAT= "+str(arraylat[idxX,idxY])+" LON= "+str(arraylon[idxX,idxY])
     return idxX,idxY
+#----------------------------------------------------------------------------
+"""
+get range for a 2D fulldisk image for plotting
+  I  - Input array
+  C  - if true the MI/MA will be centered around zero
+output:
+  MI - the useful minimum value
+  MA - the useful maximum value
+"""
+#----------------------------------------------------------------------------
+def getrange(I,C=False):
+  #infer X and Y dimensions
+  X=np.shape(I)[0]
+  Y=np.shape(I)[1]
+  #discard outer D%
+  D=10
+  pX=(X/100)*D
+  pY=(Y/100)*D
+  I=I[pX:X-pX,pY:Y-pY]
+  #compute percentiles
+  MI=np.nanpercentile(I,10.0)
+  MA=np.nanpercentile(I,90.0)
+  if C:
+    A=np.amax([abs(MI),abs(MA)])
+    MI=A*-1
+    MA=A
+  return MI,MA
 
-startdate= "199801"#raw_input("enter startdate (YYYYMM)  : ")
-enddate  = "200601"#raw_input("enter enddate (YYYYMM)    : ")
-dset     = "EASY"#"raw_input("EASY or FULL              : ")
-flag     = "y"#raw_input("test also contents (y/n)  : ")
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+startdate= raw_input("enter startdate (YYYYMM)  : ")
+enddate  = raw_input("enter enddate (YYYYMM)    : ")
+dset     = raw_input("EASY or FULL              : ")
+flag     = raw_input("test also contents (y/n)  : ")
 if flag=="y":
-  SSP      = "00.0"#raw_input("enter Sub Sat Point(XX.X) : ")
-  targetVAR= "u_non_random_toa_bidirectional_reflectance"#raw_input("enter target variable     : ")
+  SSP      = raw_input("enter Sub Sat Point(XX.X) : ")
+  targetVAR= raw_input("enter target variable     : ")
   ulLAT    = 28.7#float(raw_input("enter upper LAT     : "))
   lrLAT    = 28.4#float(raw_input("enter lower LAT     : "))
   lrLON    = 23.54#float(raw_input("enter bigger LON    : "))
@@ -109,6 +137,7 @@ for year in range(yearS,yearE+1):
           with Dataset(f, mode='r') as current:
             if q==1 and hour==12:
               disp=current.variables[targetVAR][:,:]
+              mini,maxi=getrange(current.variables[targetVAR])
               #to display selected area:
               mi=np.amin(disp)
               mx=np.amax(disp)

@@ -164,7 +164,7 @@ header3_StdBbIrCountNominal;Standard deviation of black body IR count for nomina
 header3_BbWvCountNominal;BB WV count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;1;0;0.001
 header3_StdBbWvCountNominal;Standard deviation of black body WV count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;1;0;0.01
 header3_BbCalibrationTimestamp;Timestamp for black body calibration (DayDayDaySlotSlot) (valid in trailer);S1;0;0;1;1;0;1;0;1
-header3_MpefAabsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;1;0;0.00001
+header3_MpefAbsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;1;0;0.00001
 header3_MpefIrSpaceCount;MPEF IR space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;1;0;0.1
 header3_MpefIrCalibrationTimestamp;MPEF Timestamp for IR calibration (DayDayDaySlotSlot): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;1;0;1
 header3_MpefAbsWvCal;MPEF absolute WV calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;1;0;0.00001
@@ -287,7 +287,7 @@ trailer_StdBbIrCountNominal;Standard deviation of black body IR count for nomina
 trailer_BbWvCountNominal;BB WV count for nominal calibration mode (XXX.XXX): corresponds to delta count between hot black body and space, averaged by IPS. (valid in trailer);S1;0;0;1;1;0;0;;1
 trailer_StdBbWvCountNominal;Standard deviation of black body WV count for nominal calibration mode (X.XX) (valid in trailer);S1;0;0;1;1;0;0;;1
 trailer_BbCalibrationTimestamp;Timestamp for black body calibration (DayDayDaySlotSlot) (valid in trailer);S1;0;0;1;1;0;0;;1
-trailer_MpefAabsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;0;;1
+trailer_MpefAbsIrCal;MPEF absolute IR calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;0;;1
 trailer_MpefIrSpaceCount;MPEF IR space count (XX.X): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;0;;1
 trailer_MpefIrCalibrationTimestamp;MPEF Timestamp for IR calibration (DayDayDaySlotSlot): most recent information available to IPS, previous slot or earlier (valid in trailer);S1;0;0;1;1;0;0;;1
 trailer_MpefAbsWvCal;MPEF absolute WV calibration (0.XXXXX): most recent information available to IPS, previous slot or earlier//(valid in trailer);S1;0;0;1;1;0;0;;1

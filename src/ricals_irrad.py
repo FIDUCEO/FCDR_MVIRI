@@ -25,7 +25,7 @@ def band_irrad(sundist,sdu,srffile="../sensor_data/pre_launch/spectral_response_
   The default spectrum is the one described in EUM/MTG/DEF/10/0611
   """
   AU=149597870700     #[m]
-  sunradius=695.700*1000 #[m]
+  sunradius=6.96342*10**8 #[m]
   sunarea=4*np.pi*sunradius**2
   
   # 1. read solar spectrum (SS) [W m^-2 micron^-1]
@@ -45,7 +45,7 @@ def band_irrad(sundist,sdu,srffile="../sensor_data/pre_launch/spectral_response_
     #interpolate between selected data points
   #ssi=np.interp(srf[:,0],ss[:,0],ss[:,1]) #http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.interp.html
     #interpolate in groups and means
-  bint = np.linspace(mini-(step/2), maxi+(step/2), binN+1)
+  bint = np.linspace(mini-(step/2), maxi+(step/2), binN+1)#integrate
   bins = np.linspace(mini, maxi, binN)
   df1=pd.DataFrame(ssf[:,0:2],columns=['wl','rad'])
   df1=df1.loc[(df1.wl>=mini) & (df1.wl<=maxi)]
@@ -55,6 +55,7 @@ def band_irrad(sundist,sdu,srffile="../sensor_data/pre_launch/spectral_response_
   #weighting
   f  = ssi*srf[:,1]#*np.median(np.diff(srf[:,0]))
   #df = ssi*srf[:,2]#*np.median(np.diff(srf[:,0]))
+  
   df = ssi*srf[:,3:]*ssi[:, None]#includes covariances
 
   if debug==1:
@@ -129,11 +130,13 @@ def band_irrad(sundist,sdu,srffile="../sensor_data/pre_launch/spectral_response_
     print "Irradiance uncertainty at "+str(len(ssi))+" bins = "+str(dF)+" Wm^-2"
     
   if d==2:#consider sun distance
-    irr_at_sun=F*AU**2/sunarea #[Wm^-2sr^-1] #https://www.google.de/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=0ahUKEwjV3trwy-LRAhWKJcAKHZ12AaQQFggmMAA&url=http%3A%2F%2Fwww.ghinstruments.com%2Fwp-content%2Fuploads%2F2015%2F03%2FP23_RADIANCE-TO-IRRADIANCE-CONVERSION.ppt&usg=AFQjCNFzDeGH5WYCeKizTMj5VfigqoNAYQ&cad=rja
-    dirr_at_sun=dF*AU**2/sunarea
-    F=irr_at_sun*sunarea/(sundist*AU)**2 #[W m^-2]
-    dF=dirr_at_sun*sunarea/(sundist*AU)**2
-    
+    #probably bullshit
+    #irr_at_sun=F*AU**2/sunarea #[Wm^-2sr^-1] #https://www.google.de/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=0ahUKEwjV3trwy-LRAhWKJcAKHZ12AaQQFggmMAA&url=http%3A%2F%2Fwww.ghinstruments.com%2Fwp-content%2Fuploads%2F2015%2F03%2FP23_RADIANCE-TO-IRRADIANCE-CONVERSION.ppt&usg=AFQjCNFzDeGH5WYCeKizTMj5VfigqoNAYQ&cad=rja
+    #dirr_at_sun=dF*AU**2/sunarea
+    #F=irr_at_sun*sunarea/(sundist*AU)**2 #[W m^-2]
+    #dF=dirr_at_sun*sunarea/(sundist*AU)**2
+    F=per_sr(F,year,DOY,sundist*AU,sunradius)
+    dF=per_sr(F,year,DOY,sundist*AU,sunradius)
   return (F,dF,srf)
 
 
@@ -172,3 +175,9 @@ def interpolate_ssi(srf,df1,bint,binN):
     #df2=pd.DataFrame(groups.mean())
     ssi=np.array(df2.rad)
   return ssi
+
+def per_sr(R,year,doy,dist_to_source_m,rad_of_source_m=6.96342*10**8):# R:[W m^-2 or W m^-2 micron^-1]
+  planeangle_rad=2*np.sin(rad_of_source_m/dist_to_source_m)#[radians] sin alpha=gegenkathete/hypothenuse
+  solidangle_sr=2*np.pi * (1 - np.cos(planeangle_rad/2)) # [steradians]http://smart-unit-converter.com/angle-converter.php
+  temp=np.divide(R,solidangle_sr)#[W m^-2 sr^-1]
+  return temp

@@ -2,10 +2,10 @@ import subprocess
 import multiprocessing
 import sys
 
-
+sat=raw_input("which satellite? (e.g.:"+'"MET7"'+"):")
 comment='"pre-beta release!! Use only for illustration; acqtime fixed; SZA fixed; solar spectrum from rayference"'
-release="2.5"
-srfvers="0954"
+release="2.7"
+srfvers="1000"
 s_s=sys.argv[1]
 s_e=sys.argv[2]
 s=int(s_s[4:])
@@ -29,7 +29,7 @@ for year in range(sy,ey+1):
         #execute
         sd=s_y+str(doy).zfill(3)
         ed=s_y+str(doy).zfill(3)
-        sat='"MET7"'
+        #sat='"MET7"'
         cmd="python ricals_main.py -s "+sd+" -e "+ed+" -m "+sat+" -t "+time+" -r "+release+" -v "+srfvers+" -a /DSNNAS/Repro_Temp/mviri_dev/FCDR/ -c "+comment
         print cmd
         try:
