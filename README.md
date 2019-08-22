@@ -1,3 +1,25 @@
+# Meteosat Fundamental Climate Data Record  
+  
+Copyright (C) EUMETSAT, 2019  
+This code was developed for the EC project “Fidelity and Uncertainty in   
+Climate Data Records from Earth Observations (FIDUCEO)”. 
+Grant Agreement: 638822  
+  
+Version 0.1.1 Reviewed and approved by Frank Rüthrich, EUMETSAT 19-08-2019  
+  
+ * This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.  
+  
+A copy of the GNU General Public License should have been supplied along
+with this program; if not, see http://www.gnu.org/licenses/  
+
+
 # FCDR generation Software for fiduceo  
 
 ## REQUIREMENTS  
@@ -5,10 +27,10 @@
 module purge  
 source ~/.climproc/modules/00-generic_setup_with_menu.module  
 ### ENVIRONMENT VARIABLES  
-export PREF="/DSNNAS/Repro_Temp/users/frankr/CDR"  
+export PREF="..."  
 export RICalPyROOT=${PREF}/git/RICalPy  
 #not on DSNNAS to be easily editable from X2go:  
-export RICalPyCODE="/tcenas/home/frankr/git/RICalPy"  
+export RICalPyCODE="..."  
 #to install from git:  
 export gitdir=${PREF}"/git/"  
 export P27git=${PREF}"/git/python2.7"  
@@ -39,22 +61,12 @@ mkdir -p $PREF/DB
 ln -s $RICalPyCODE $RICalPyROOT #link from my home; may not be necessary once development is ready  
 
 ### get a decent Python 2.7 virtual evironment
-#### only load it
-module use -a /DSNNAS/Repro_Temp/users/mgrant/modulefiles  
-module load anaconda2/4.3.1  
-source activate $PYTHON_DIR  
-python -c "import psycopg2"  
-
-#### install it
-mkdir -p $PYTHON_DIR  
-module use -a /DSNNAS/Repro_Temp/users/mgrant/modulefiles  
-module load anaconda2/4.3.1   
-#make a local virtualenv:  
-conda create -p $PYTHON_DIR --clone root  
-source activate $PYTHON_DIR  
+recommended: anaconda2/4.3.1
+### easy accessible libs
 easy_install psycopg2  
 pip install PyAstronomy
 <!--pip install pyspectral-->
+
 ### Tool for MVIRI extraction of calibration coefficients  
 #### Installation:  
 cd $gitdir  
@@ -102,7 +114,7 @@ cd ${RICalPyROOT}/git/FCDRTools
   python setup.py install --prefix=${PREF}  
 #### Installation of most recent version:  
 #while developing:  
-cd /tcenas/home/frankr/git/  
+cd ${gitdir}/  
   git clone https://github.com/FIDUCEO/FCDRTools.git  
   cd FCDRTools  
     python setup.py build  
@@ -203,7 +215,7 @@ pg_ctl -D ${PGDATA} start
 netstat -na|grep 5432  
 
 ### Initialize database  
-source /tcenas/home/frankr/git/RICalPy/environment.sh  
+source ${gitdir}/RICalPy/environment.sh  
 cd ${RICalPyROOT}/tools  
 python generate_loggingDB.py  
 #follow instructions  
@@ -221,7 +233,7 @@ cd ${RICalPyROOT}/tools
 python cf_errors.py  
 #follow instructions  
 #then copy files from $CALIB_STORE to the RICalPy/config folder:
-cp ${CALIB_STORE}/M2*_R3.1* /tcenas/home/frankr/git/RICalPy/config/
+cp ${CALIB_STORE}/M2*_R3.1* ${gitdir}/RICalPy/config/
 
 ### Create calibration files for all gains  
 #This ensures a flawless processing of the software.  
@@ -230,7 +242,7 @@ cp ${CALIB_STORE}/M2*_R3.1* /tcenas/home/frankr/git/RICalPy/config/
 #basically the files will be generated in $CALIB_STORE and may have 
 #to be copied over to RICalPy/config
 #e.g. with:
-cp /tcenas/home/frankr/git/sscc_calib_tool/config/M2_*_R3.1* /tcenas/home/frankr/git/RICalPy/config/
+cp ${gitdir}/sscc_calib_tool/config/M2_*_R3.1* ${gitdir}/RICalPy/config/
 ### Initialize LUT + static file  
 cd ${RICalPyROOT}/tools  
 python generate_static_and_LUT.py  
@@ -242,7 +254,7 @@ python generate_static_and_LUT.py
 #to allow logging  
 pg_ctl -D ${PGDATA} start  
 ### on any machine:
-source /tcenas/home/frankr/git/RICalPy/environment.sh  
+source ${gitdir}/RICalPy/environment.sh  
 cd ${RICalPyROOT}/src  
 python ricals_main.py -s 2005180 -e 2005180 -m "MET7" -t 1200 -r 2.7 -v 1801 -a /DSNNAS/Repro_Temp/mviri_dev/FCDR/ -c "preliminary files only for illustration"  
 ### on cdrlnxv01:
@@ -250,7 +262,7 @@ python ricals_main.py -s 2005180 -e 2005180 -m "MET7" -t 1200 -r 2.7 -v 1801 -a 
 pg_ctl -D ${PGDATA} stop  
 
 ## PBS  
-source /tcenas/home/frankr/git/RICalPy/environment.sh  
+source ${gitdir}/RICalPy/environment.sh  
 cd ${RICalPyROOT}/pbsify
 python pbsify.py
 #follow instructions
